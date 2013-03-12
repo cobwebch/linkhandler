@@ -1,0 +1,105 @@
+09-11-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Remove URL verification, just force "header" redirect because of problems if the requested pages is protected by HTTP authentication.
+
+09-11-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Keep attention on the languagevisibility XCLASS
+	* Change default value for "options.saveDocView.tt_news"
+
+03-11-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Make the t3lib_softrefproc XCLASS optional during the extension manager.
+	* Fixed bug #5199: Replace "t3lib_div::makeInstanceClassName()"
+
+02-11-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Add feature #5191: Provide XCLASS to enable bug fix #10827: Hide "Save and View"-button when editing a content-element
+	* Add some "conflicts" constraints to the ext_emconf.php
+	* Add support to add an XCLASS for alt_doc.php if allready an XCLASS exists.
+
+29-10-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fixed Bug #3928: Referenced records won't show up in Refindex
+
+22-10-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fixed Bug #5034: URL length of tab links causes errors in IE7
+
+21-10-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fixed Bug #3926: Omit Overlay-Records within Linkhandler-DB List
+	* Fixed furhter link params in linkhandler link processing
+
+25-09-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fixed Bug #4479: allow recursive onlyPids - Thanks to Stefano Cecere for providing the patch. 
+
+11-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Minnor code changes
+
+10-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Add some comments
+	* Update documentation
+	* Minnor code changes
+
+09-08-2009 Daniel Pötzinger
+	* New configurations for recordTab: 
+		noAttributesForm=1
+		linkClassName=footnote
+	
+07-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fix bug #3784: Tabs in Linkview are jumping
+	* Add feature #4183: Add parameter overwriteHandler to the tab configuration
+	* Minnor code changes
+	* Add feature #4184: Show only the "onlyPids" configured pages in the pagetree
+
+03-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Minnor code changes
+	* Make the tx_linkhandler_handler::getCurrentRecord more robustness
+
+16-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Refactor the tx_linkhandler_handler
+
+16-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Minnor code changes 
+	* Add support for WS preview link generation
+	* Add support to view records from different language
+	* Increase version number
+	* Fix bug #3927: tx_linkhandler_handler should check for the l18n_parent and fix the recordRow
+
+12-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Optimize Feature #3414: Use linkhandler for backend record "view" button
+
+11-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fix bug #3867: tslib_cObj::getTypoLink_URL - Return just empty string
+
+10-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fix bug #3675: typolink.returnLast not working with record links?
+
+03-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Minor code change
+
+30-06-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Improve added feature #3800
+	* Minor code change
+	* Update documentation
+
+29-06-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Add Feature #3800: Change the "applyPatch" from ext_conf_template to version_compare in ext_localconf.php
+
+27-06-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Add Feature #3414: Use linkhandler for backend record "view" button
+
+05-06-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Fix bug #3452: link handler should respect blindLinkOptions configuration of TCA
+	* Minor code indention
+
+21-04-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* fix Bug #3143
+
+17-04-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* Update Documentation
+
+08-04-2009 Michael Klapper <michael.klapper@aoemedia.de>
+	* fix Bug #2626, #3057, #3058, #1488, #1244, #2675
+	* Add some PHPDoc
+	* Code indention
+
+23-01-2009 Stefano Cecere <stefano.cecere@krur.com>
+	* fix Bug #1342 (rtehtmlarea hook name has changed)
+
+07-09-17 Daniel Pötzinger  <poetzinger@aoemedia.de>
+	* Initial release

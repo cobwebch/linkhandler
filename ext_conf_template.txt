@@ -1,0 +1,6 @@
+  
+  # cat=basic//10; type=boolean; label= Apply XCLASS on alt_doc.php: Use the UserTSconfig option hide "Save and View"-button when editing a record. Also every "Save & view"-button is hidden if an record is located into a sys_folder. This apply a XCLASS on alt_doc.php for TYPO3 versions lower than 4.3.0.
+applyXclassHideSaveAndViewButton = 0
+  
+  # cat=basic//10; type=boolean; label= Apply XCLASS on class.t3lib_softrefproc.php: This XCLASS provide some hooks to handle the softrefproc for your custom linkhandler.
+applyXclassToEnableSoftrefParser = 0

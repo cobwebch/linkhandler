@@ -1,0 +1,1 @@
+linkhandler.newsSinglePid = 6
