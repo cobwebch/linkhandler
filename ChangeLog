@@ -1,3 +1,8 @@
+2013-03-12 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Heavily patched for TYPO3 6.0 compatibility.
+	* Commented out all code in ext_localconf.php related to older versions of TYPO3. This is better for performance.
+
 09-11-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Remove URL verification, just force "header" redirect because of problems if the requested pages is protected by HTTP authentication.
 

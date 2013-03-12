@@ -25,6 +25,9 @@
 if (!defined ('TYPO3_MODE'))
 	die ('Access denied.');
 
+// Explicitly requires the right file containing "localPageTree" class, because it still exists and is still needed
+require_once(PATH_typo3 . 'class.browse_links.php');
+
 /**
  * Class which generates the page tree for records, specific version for linkhandler extension
  *  -> shows records on the selected page and makes them clickable to get the link
@@ -36,7 +39,7 @@ if (!defined ('TYPO3_MODE'))
  * @subpackage tx_linkhandler
  * @access public
  */
-class tx_linkhandler_recordsTree extends localPageTree {
+class tx_linkhandler_recordsTree extends \localPageTree {
 
 	/**
 	 * @var tx_rtehtmlarea_browse_links
@@ -63,7 +66,7 @@ class tx_linkhandler_recordsTree extends localPageTree {
 	/**
 	 * Create the page navigation tree in HTML
 	 *
-	 * @param array Tree array
+	 * @param array $treeArr Tree array
 	 * @return	string HTML output.
 	 */
 	function printTree($treeArr = '') {
@@ -150,9 +153,9 @@ class tx_linkhandler_recordsTree extends localPageTree {
 	/**
 	 * Wrap the plus/minus icon in a link
 	 *
-	 * @param	string		HTML string to wrap, probably an image tag.
-	 * @param	string		Command for 'PM' get var
-	 * @param	boolean		If set, the link will have a anchor point (=$bMark) and a name attribute (=$bMark)
+	 * @param	string $icon HTML string to wrap, probably an image tag.
+	 * @param	string $cmd Command for 'PM' get var
+	 * @param	string $bMark If set, the link will have a anchor point (=$bMark) and a name attribute (=$bMark)
 	 * @return	string		Link-wrapped input string
 	 */
 	function PM_ATagWrap($icon,$cmd,$bMark='')	{

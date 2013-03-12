@@ -64,8 +64,8 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 	 * @param array $configuration
 	 * @param string $currentLinkValue
 	 * @param boolean $isRTE
+	 * @param $currentPid
 	 * @access pubic
-	 * @return void
 	 */
 	public function __construct($browseLinksObj, $addPassOnParams, $configuration, $currentLinkValue, $isRTE, $currentPid) {
 		$environment          = '';
@@ -77,8 +77,8 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 		$this->configuration = $configuration;
 		$this->pointer       = $browseLinksObj->pointer;
 
-		if (is_array(t3lib_div::_GP('P'))) {
-			$environment = t3lib_div::implodeArrayForUrl('P', t3lib_div::_GP('P'));
+		if (is_array(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('P'))) {
+			$environment = \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl('P', \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('P'));
 		}
 
 		$this->addPassOnParams = $addPassOnParams . $environment;
@@ -101,14 +101,16 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 
 			// check the linkhandler TSConfig and find out  which config is responsible for the current table:
 		foreach ($tabsConfig as $key => $tabConfig) {
+
 			if ($currentHandler == 'record' || $currentHandler == $tabConfig['overwriteHandler']) {
-				$info['recordTable'] = $table;
-				$info['recordUid']   = $uid;
 				if ($table == $tabConfig['listTables']) {
 					$info['act'] = $key;
-				}	
+				}
 			}
 		}
+
+		$info['recordTable'] = $table;
+		$info['recordUid']   = $uid;
 
 		return $info;
 	}
@@ -131,7 +133,7 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 			}
 		}
 
-		$pagetree = t3lib_div::makeInstance('tx_linkhandler_recordsTree'); /* @var $pagetree tx_linkhandler_recordsTree */
+		$pagetree = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_linkhandler_recordsTree'); /* @var $pagetree tx_linkhandler_recordsTree */
 		$pagetree->browselistObj = $this->browseLinksObj;
 		if (array_key_exists('onlyPids', $this->configuration) && $this->configuration['onlyPids'] != '') {
 			$pagetree->expandAll = true;
@@ -168,11 +170,7 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 		global $TCA,$BE_USER, $BACK_PATH;
 		$out = '';
 
-		if ( $this->expandPage >= 0 
-			&& ((version_compare(TYPO3_version,'4.6.0','>=') && t3lib_utility_Math::canBeInterpretedAsInteger($this->expandPage))
-				|| t3lib_div::testInt($this->expandPage))
-			&& $BE_USER->isInWebMount($this->expandPage) )	{
-			
+		if ( $this->expandPage >= 0 && \TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($this->expandPage) && $BE_USER->isInWebMount($this->expandPage) )	{
 			$tables = '*';
 
 			if (isset($this->configuration['listTables'])) {
@@ -182,7 +180,7 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 			if (! strcmp(trim($tables), '*'))	{
 				$tablesArr = array_keys($TCA);
 			} else {
-				$tablesArr = t3lib_div::trimExplode(',',$tables,1);
+				$tablesArr = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',',$tables,1);
 			}
 			reset($tablesArr);
 
@@ -191,31 +189,31 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 
 				// Create the header, showing the current page for which the listing is. Includes link to the page itself, if pages are amount allowed tables.
 			$titleLen = intval($GLOBALS['BE_USER']->uc['titleLen']);
-			$mainPageRec = t3lib_BEfunc::getRecordWSOL('pages',$this->expandPage);
+			$mainPageRec = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordWSOL('pages',$this->expandPage);
 			$ATag ='';
 			$ATag_e = '';
 			$ATag2 = '';
 			if (in_array('pages', $tablesArr))	{
-				$ficon    = t3lib_iconWorks::getIcon('pages', $mainPageRec);
-				$ATag     = "<a href=\"#\" onclick=\"return insertElement('pages', '" . $mainPageRec['uid'] . "', 'db', " . t3lib_div::quoteJSvalue($mainPageRec['title']) . ", '', '', '".$ficon."', '',1);\">";
-				$ATag2    = "<a href=\"#\" onclick=\"return insertElement('pages', '" . $mainPageRec['uid'] . "', 'db', " . t3lib_div::quoteJSvalue($mainPageRec['title']) . ", '', '', '".$ficon."', '',0);\">";
+				$ficon    = \TYPO3\CMS\Backend\Utility\IconUtility::getIcon('pages', $mainPageRec);
+				$ATag     = "<a href=\"#\" onclick=\"return insertElement('pages', '" . $mainPageRec['uid'] . "', 'db', " . \TYPO3\CMS\Core\Utility\GeneralUtility::quoteJSvalue($mainPageRec['title']) . ", '', '', '".$ficon."', '',1);\">";
+				$ATag2    = "<a href=\"#\" onclick=\"return insertElement('pages', '" . $mainPageRec['uid'] . "', 'db', " . \TYPO3\CMS\Core\Utility\GeneralUtility::quoteJSvalue($mainPageRec['title']) . ", '', '', '".$ficon."', '',0);\">";
 				$ATag_alt = substr($ATag, 0, -4) . ", '', 1);\">";
 				$ATag_e   = '</a>';
 			}
-			$picon=t3lib_iconWorks::getIconImage('pages',$mainPageRec,$BACK_PATH,'');
-			$pBicon=$ATag2?'<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/plusbullet2.gif','width="18" height="16"').' alt="" />':'';
-			$pText=htmlspecialchars(t3lib_div::fixed_lgd_cs($mainPageRec['title'],$titleLen));
+			$picon=\TYPO3\CMS\Backend\Utility\IconUtility::getIconImage('pages',$mainPageRec,$BACK_PATH,'');
+			$pBicon=$ATag2?'<img'.\TYPO3\CMS\Backend\Utility\IconUtility::skinImg($BACK_PATH,'gfx/plusbullet2.gif','width="18" height="16"').' alt="" />':'';
+			$pText=htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::fixed_lgd_cs($mainPageRec['title'],$titleLen));
 			$out.=$picon.$ATag2.$pBicon.$ATag_e.$ATag.$pText.$ATag_e.'<br />';
 
 				// Initialize the record listing:
 			$id = $this->expandPage;
-			$pointer = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::forceIntegerInRange($this->pointer,0,100000) : t3lib_div::intInRange($this->pointer,0,100000);
+			$pointer = \TYPO3\CMS\Core\Utility\MathUtility::forceIntegerInRange($this->pointer,0,100000);
 			$perms_clause = $GLOBALS['BE_USER']->getPagePermsClause(1);
 			$pageinfo = t3lib_BEfunc::readPageAccess($id,$perms_clause);
 
 				// Generate the record list:
-				// unfortunatly we have to set weird dependencies.
-			$dblist = t3lib_div::makeInstance('TBE_browser_recordListRTE'); /** @var $dblist TBE_browser_recordListRTE */
+				// unfortunately we have to set weird dependencies.
+			$dblist = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TBE_browser_recordListRTE'); /** @var $dblist TBE_browser_recordListRTE */
 			$dblist->setAddPassOnParams($this->addPassOnParams);
 			$dblist->browselistObj=$this->browseLinksObj;
 			$dblist->this->pObjScript=$this->browseLinksObj->this->pObjScript;
@@ -230,10 +228,10 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 				$dblist->setOverwriteLinkHandler($this->configuration['overwriteHandler']);
 			}
 
-			$dblist->start($id,t3lib_div::_GP('table'),$pointer,
-				t3lib_div::_GP('search_field'),
-				t3lib_div::_GP('search_levels'),
-				t3lib_div::_GP('showLimit')
+			$dblist->start($id,\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('table'),$pointer,
+				\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('search_field'),
+				\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('search_levels'),
+				\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('showLimit')
 			);
 
 			$dblist->setDispFields();
@@ -248,7 +246,7 @@ class tx_linkhandler_recordTab implements tx_linkhandler_tabHandler {
 			// Return accumulated content:
 		return $out;
 	}
-	
+
 	/**
         * returns a form element with the typical elements that are present in the RTE attributesForm, but all fields are hidden.
         * This can be used to force a certain classname etc for the link

@@ -2,14 +2,15 @@
 if (!defined ('TYPO3_MODE'))
 	die ('Access denied.');
 
-global $TYPO3_CONF_VARS, $_EXTKEY;
-$configurationArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$_EXTKEY]);
+// FSU - 2010-12-14
+// Commented out all the code blocks below out of performance reasons (they might be needed if running TYPO3 < 4.4)
+//global $TYPO3_CONF_VARS, $_EXTKEY;
+//$configurationArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$_EXTKEY]);
 
 /**
  * Add conditional XCLASS to your TYPO3 environment
  *
  * The patches will be automaticly applyed if the TYPO3 version is lower than 4.2.0
- */
 if ( version_compare(TYPO3_version, '4.2.0', '<') ) {
 	// register XCLASSES (adds hooks)
 	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/rtehtmlarea/mod3/class.tx_rtehtmlarea_browse_links.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/4.1/class.ux_tx_rtehtmlarea_browse_links.php';
@@ -23,10 +24,10 @@ if ( version_compare(TYPO3_version, '4.2.0', '<') ) {
 	    $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['tslib/class.tslib_content.php']=t3lib_extMgm::extPath($_EXTKEY) . 'patch/4.1/class.ux_tslib_content.php';
 	}
 }
+ */
 
 /**
  * Register some hooks
- */
  // Enable softref parser work with linkhandler values
 if ( version_compare(TYPO3_version, '4.3.1', '<=') && is_array($configurationArray) && array_key_exists('applyXclassToEnableSoftrefParser', $configurationArray) && ($configurationArray['applyXclassToEnableSoftrefParser']) == 1) {
 	$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['t3lib/class.t3lib_softrefproc.php'] = t3lib_extMgm::extPath($_EXTKEY) . '/patch/class.ux_t3lib_softrefproc.php';
@@ -38,6 +39,7 @@ if ( version_compare(TYPO3_version, '4.3.0', '<') && is_array($configurationArra
 	elseif ($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['typo3/alt_doc.php'] == '' ) 
 		$TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['typo3/alt_doc.php'] = t3lib_extMgm::extPath($_EXTKEY) . '/patch/class.ux_alt_doc.php';
 }
+ */
 
 // add linkhandler for "record"
 // require_once(t3lib_extMgm::extPath($_EXTKEY) . 'class.tx_linkhandler_handler.php');

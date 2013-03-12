@@ -36,13 +36,13 @@ if (!defined ('TYPO3_MODE'))
  * @subpackage tx_linkhandler
  * @access public
  */
-class TBE_browser_recordListRTE extends TBE_browser_recordList {
+class TBE_browser_recordListRTE extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordList {
 
 	var $hookObj;
 	var $addPassOnParams;
 
 	/**
-	 * Default value is "recored"
+	 * Default value is "record"
 	 *
 	 * @var string
 	 */
@@ -70,10 +70,10 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 	/**
 	 * Returns the title (based on $code) of a record (from table $table) with the proper link around (that is for "pages"-records a link to the level of that record...)
 	 *
-	 * @param	string		Table name
-	 * @param	integer		UID (not used here)
-	 * @param	string		Title string
-	 * @param	array		Records array (from table name)
+	 * @param	string $table Table name
+	 * @param	integer $uid UID (not used here)
+	 * @param	string $title Title string
+	 * @param	array $row Records array (from table name)
 	 * @return	string
 	 */
 	function linkWrapItems($table,$uid,$title,$row)	{
@@ -83,9 +83,7 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 		if (is_array($TCA[$table]['ctrl']) && array_key_exists('transOrigPointerField', $TCA[$table]['ctrl']) ) {
 			$transOrigPointerField = $TCA[$table]['ctrl']['transOrigPointerField'];
 
-			if ((version_compare(TYPO3_version,'4.6.0','>=') && t3lib_utility_Math::convertToPositiveInteger($row[$transOrigPointerField]) > 0)
-				|| t3lib_div::intval_positive($row[$transOrigPointerField]) > 0) {
-
+			if (\TYPO3\CMS\Core\Utility\MathUtility::convertToPositiveInteger($row[$transOrigPointerField]) > 0 ) {
 				$uid = $row[$transOrigPointerField];
 			}
 		}
@@ -97,13 +95,13 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 		}
 
 		if ($this->browselistObj->curUrlInfo['recordTable']==$table && $this->browselistObj->curUrlInfo['recordUid']==$uid)	{
-			$curImg='<img'.t3lib_iconWorks::skinImg($BACK_PATH,'gfx/blinkarrow_right.gif','width="5" height="9"').' class="c-blinkArrowL" alt="" />';
+			$curImg='<img'.\TYPO3\CMS\Backend\Utility\IconUtility::skinImg($BACK_PATH,'gfx/blinkarrow_right.gif','width="5" height="9"').' class="c-blinkArrowL" alt="" />';
 		} else {
 			$curImg = '';
 		}
 
-		$title = t3lib_BEfunc::getRecordTitle($table,$row,FALSE,TRUE);
-		$ficon = t3lib_iconWorks::getIcon($table,$row);
+		$title = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordTitle($table,$row,FALSE,TRUE);
+		$ficon = \TYPO3\CMS\Backend\Utility\IconUtility::getIcon($table,$row);
 
 		if (@$this->browselistObj->mode=='rte') {
 			//used in RTE mode:
@@ -135,7 +133,7 @@ class TBE_browser_recordListRTE extends TBE_browser_recordList {
 				'&contentTypo3Charset='.$this->browselistObj->contentTypo3Charset.
 				'&mode='.$GLOBALS['SOBE']->browser->mode.
 				'&expandPage='.$GLOBALS['SOBE']->browser->expandPage.
-				'&RTEtsConfigParams='.t3lib_div::_GP('RTEtsConfigParams').
+				'&RTEtsConfigParams='.\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('RTEtsConfigParams').
 				'&bparams='.rawurlencode($GLOBALS['SOBE']->browser->bparams).
 				$this->addPassOnParams;
 		return $str;

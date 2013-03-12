@@ -56,11 +56,11 @@ class tx_linkhandler_tcemain {
 
 		if ( isset($GLOBALS['_POST']['_savedokview_x']) ) {
 			$settingFound   = false;
-			$currentPageID  = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($GLOBALS['_POST']['popViewId']) : t3lib_div::intval_positive($GLOBALS['_POST']['popViewId']);
-			$rootLineStruct = t3lib_BEfunc::BEgetRootLine($currentPageID);
+			$currentPageID  = \TYPO3\CMS\Core\Utility\MathUtility::convertToPositiveInteger($GLOBALS['_POST']['popViewId']);
+			$rootLineStruct = \TYPO3\CMS\Backend\Utility\BackendUtility::BEgetRootLine($currentPageID);
 			$defaultPageID  = (isset($rootLineStruct[0]) && array_key_exists('uid', $rootLineStruct[0])) ? $rootLineStruct[0]['uid'] : $currentPageID ;
 
-			$pagesTSC = t3lib_BEfunc::getPagesTSconfig($currentPageID, $rootLineStruct); // get page TSconfig
+			$pagesTSC = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($currentPageID, $rootLineStruct); // get page TSconfig
 			$handlerConfigurationStruct = $pagesTSC['mod.']['tx_linkhandler.'];
 
 				// search for the current setting for given table
@@ -73,25 +73,21 @@ class tx_linkhandler_tcemain {
 			}
 
 			if ($settingFound) {
-				t3lib_div::loadTCA($table);
+				\TYPO3\CMS\Core\Utility\GeneralUtility::loadTCA($table);
 				$l18nPointer = ( array_key_exists('transOrigPointerField', $GLOBALS['TCA'][$table]['ctrl']) ) ? $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] : '';
- 				if ((version_compare(TYPO3_version,'4.6.0','>=') && !t3lib_utility_Math::canBeInterpretedAsInteger($id))
- 					|| !t3lib_div::testInt($id)) {
-
+ 				if (!\TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($id)) {
  					$id = $pObj->substNEWwithIDs[$id];
  				}
- 				if ((version_compare(TYPO3_version,'4.6.0','>=') && t3lib_utility_Math::canBeInterpretedAsInteger($id))
- 					|| t3lib_div::testInt($id)) {
-
- 					$recordArray = t3lib_BEfunc::getRecord($table, $id);
+ 				if (\TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($id)) {
+ 					$recordArray = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord($table, $id);
  				} else {
  					$recordArray = $fieldArray;
 				}
 
-				if ( array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration]) && (t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0) ) {
-					$previewPageId = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) : t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
+				if ( array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration]) && (t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0) ) {
+					$previewPageId = \TYPO3\CMS\Core\Utility\MathUtility::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
 				} else {
-					$previewPageId = (version_compare(TYPO3_version,'4.6.0','>=')) ? t3lib_utility_Math::convertToPositiveInteger($defaultPageID) : t3lib_div::intval_positive($defaultPageID);
+					$previewPageId = \TYPO3\CMS\Core\Utility\MathUtility::convertToPositiveInteger($defaultPageID);
 				}
 
 				if ($GLOBALS['BE_USER']->workspace != 0) {

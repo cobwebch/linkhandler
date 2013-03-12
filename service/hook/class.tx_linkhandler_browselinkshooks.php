@@ -37,12 +37,12 @@ if (!defined ('TYPO3_MODE'))
 // include defined interface for hook
 // (for TYPO3 4.x usage this interface is part of the patch)
 if ( version_compare(TYPO3_version, '4.2.0', '<') ) {
-	require_once t3lib_extMgm::extPath('linkhandler') . 'patch/interfaces/interface.t3lib_browselinkshook.php';
+	require_once \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('linkhandler') . 'patch/interfaces/interface.t3lib_browselinkshook.php';
 } else {
 	require_once PATH_t3lib . 'interfaces/interface.t3lib_browselinkshook.php';
 }
 
-require_once (t3lib_extMgm::extPath('linkhandler').'classes/class.tx_linkhandler_recordTab.php');
+require_once (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('linkhandler').'classes/class.tx_linkhandler_recordTab.php');
 
 
 class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
@@ -64,8 +64,9 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 	/**
 	 * initializes the hook object
 	 *
-	 * @param	browse_links	parent browse_links object
-	 * @return	void
+	 * @param    browse_links $pObj parent browse_links object
+	 * @param $params
+	 * @return    void
 	 */
 	public function init($pObj, $params) {
 		$this->pObj = $pObj;
@@ -87,7 +88,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 	/**
 	 * modifies the menu definition and returns it
 	 *
-	 * @param	array	menu definition
+	 * @param	array $menuDef menu definition
 	 * @return	array	modified menu definition
 	 */
 	public function modifyMenuDefinition($menuDef) {
@@ -97,7 +98,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 			$menuDef[$key]['label'] = $tabConfig['label']; // $LANG->getLL('records',1);
 			$menuDef[$key]['url'] = '#';
 			$addPassOnParams.=$this->getaddPassOnParams();
-			$addPassOnParams = t3lib_div::implodeArrayForUrl('', t3lib_div::explodeUrl2Array($addPassOnParams), '', true);
+			$addPassOnParams = \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl('', \TYPO3\CMS\Core\Utility\GeneralUtility::explodeUrl2Array($addPassOnParams), '', true);
 			$menuDef[$key]['addParams'] = 'onclick="jumpToUrl(\'?act='.$key.'&editorNo='.$this->pObj->editorNo.'&contentTypo3Language='.$this->pObj->contentTypo3Language.'&contentTypo3Charset='.$this->pObj->contentTypo3Charset.$addPassOnParams.'\');return false;"';
 		}
 
@@ -145,7 +146,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 	/**
 	 * adds new items to the currently allowed ones and returns them
 	 *
-	 * @param	array	currently allowed items
+	 * @param	array $allowedItems currently allowed items
 	 * @return	array	currently allowed items plus added items
 	 */
 	public function addAllowedItems($allowedItems) {
@@ -202,7 +203,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 
 		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['linkhandler/class.tx_linkhandler_browselinkshooks.php'])) {
 			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['linkhandler/class.tx_linkhandler_browselinkshooks.php'] as $tabHandler) {
-				list($file,$class) = t3lib_div::revExplode(':',$tabHandler,2);
+				list($file,$class) = \TYPO3\CMS\Core\Utility\GeneralUtility::revExplode(':',$tabHandler,2);
 				include_once $file;
 				$default[] = $class;
 			}
@@ -225,7 +226,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 			$confParts= explode (':',$this->pObj->RTEtsConfigParams);
 			$pageID = $confParts[5];
 		} else {
-			$P = t3lib_div::_GP('P');
+			$P = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('P');
 
 			if (is_array($P) && array_key_exists('pid', $P)) {
 				$pageID = $P['pid'];
@@ -252,7 +253,7 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 		if ( is_array($params) && array_key_exists('itemName', $params) ) {
 
 			preg_match('~data\[([^]]*)\]\[([^]]*)\]~', $params['itemName'], $matches);
-			$recordArray = t3lib_BEfunc::getRecord($matches['1'], $matches['2']);
+			$recordArray = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord($matches['1'], $matches['2']);
 
 			if (is_array($recordArray)) {
 				$pageID = $recordArray['pid'];
@@ -274,11 +275,11 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 
 		if ($this->pObj->mode == 'rte') {
 			$RTEtsConfigParts = explode(':',$this->pObj->RTEtsConfigParams);
-			$RTEsetup = $BE_USER->getTSConfig('RTE',t3lib_BEfunc::getPagesTSconfig($RTEtsConfigParts[5]));
-			$this->pObj->thisConfig = t3lib_BEfunc::RTEsetup($RTEsetup['properties'],$RTEtsConfigParts[0],$RTEtsConfigParts[2],$RTEtsConfigParts[4]);
+			$RTEsetup = $BE_USER->getTSConfig('RTE',\TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($RTEtsConfigParts[5]));
+			$this->pObj->thisConfig = \TYPO3\CMS\Backend\Utility\BackendUtility::RTEsetup($RTEsetup['properties'],$RTEtsConfigParts[0],$RTEtsConfigParts[2],$RTEtsConfigParts[4]);
 		} elseif (! is_array($this->pObj->thisConfig['tx_linkhandler.']) ) {
 			$pid = $this->getCurrentPageId();
-			$modTSconfig = $GLOBALS["BE_USER"]->getTSConfig("mod.tx_linkhandler", t3lib_BEfunc::getPagesTSconfig($pid));
+			$modTSconfig = $GLOBALS["BE_USER"]->getTSConfig("mod.tx_linkhandler", \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($pid));
 
 			$this->pObj->thisConfig['tx_linkhandler.'] = $modTSconfig['properties'];
 		}
@@ -326,9 +327,9 @@ class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
 	protected function getaddPassOnParams() {
 		$urlParams = '';
 		if (!$this->isRTE()) {
-			$P2=t3lib_div::_GP('P');
+			$P2=\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('P');
 			if (is_array($P2) && !empty($P2) ) {
-				$urlParams = t3lib_div::implodeArrayForUrl('P',$P2);
+				$urlParams = \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl('P',$P2);
 			}
 		}
 		return $urlParams;

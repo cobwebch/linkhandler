@@ -97,13 +97,12 @@ class tx_linkhandler_service_eid {
 	protected $WSPreviewValue = null;
 
 	/**
-	 * @return void
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
 	public function __construct() {
-		$authCode         = (string)t3lib_div::_GP('authCode');
-		$linkParams       = t3lib_div::_GP('linkParams');
-		$this->languageId = t3lib_div::_GP('L');
+		$authCode         = (string)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('authCode');
+		$linkParams       = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('linkParams');
+		$this->languageId = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('L');
 
 			// extract the linkhandler and WS preview prameter
 		if ( strpos($linkParams, ';') > 0) {
@@ -116,7 +115,7 @@ class tx_linkhandler_service_eid {
 		$this->linkHandlerValue         = str_replace($this->linkHandlerKeyword . ':', '', $this->linkHandlerParams);
 
 			// check the authCode
-		if ( t3lib_div::stdAuthCode($linkParams . $this->languageId, '', 32) !== $authCode )  {
+		if ( \TYPO3\CMS\Core\Utility\GeneralUtility::stdAuthCode($linkParams . $this->languageId, '', 32) !== $authCode )  {
 			header('HTTP/1.0 401 Access denied.');
 			exit('Access denied.');
 		}
@@ -131,10 +130,10 @@ class tx_linkhandler_service_eid {
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
 	protected function initTSFE() {
-		$pid = version_compare(TYPO3_version,'4.6.0','>=') ? t3lib_utility_Math::convertToPositiveInteger(t3lib_div::_GP('id')) : t3lib_div::intval_positive(t3lib_div::_GP('id'));
+		$pid = \TYPO3\CMS\Core\Utility\MathUtility::convertToPositiveInteger(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('id'));
 
 		if ( version_compare(TYPO3_version, '4.3.0', '>=') ) {
-			$GLOBALS['TSFE'] = t3lib_div::makeInstance('tslib_fe', $GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0);
+			$GLOBALS['TSFE'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tslib_fe', $GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0);
 		} else {
 			$tsfeClassName   = t3lib_div::makeInstanceClassName('tslib_fe');
 			$GLOBALS['TSFE'] = new $tsfeClassName($GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0);
@@ -148,7 +147,7 @@ class tx_linkhandler_service_eid {
 		$GLOBALS['TSFE']->getCompressedTCarray();
 		$GLOBALS['TSFE']->initTemplate();
 		$GLOBALS['TSFE']->getConfigArray();
-		$GLOBALS['TSFE']->cObj = t3lib_div::makeInstance('tslib_cObj');
+		$GLOBALS['TSFE']->cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tslib_cObj');
 	}
 
 	/**
@@ -191,14 +190,14 @@ class tx_linkhandler_service_eid {
 			$queryString = $linkString;
 		}
 
-		$fullURL = t3lib_div::getIndpEnv('TYPO3_SITE_URL') . $queryString;
-		
+		$fullURL = \TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . $queryString;
+
 		header('Location: ' . $fullURL);
 		exit();
 	}
 }
 
-$LinkhandlerService = t3lib_div::makeInstance('tx_linkhandler_service_eid'); /* @var $LinkhandlerService tx_linkhandler_service_eid */
+$LinkhandlerService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_linkhandler_service_eid'); /* @var $LinkhandlerService tx_linkhandler_service_eid */
 $LinkhandlerService->process();
 
 ?>

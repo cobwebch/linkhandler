@@ -39,7 +39,7 @@ require_once PATH_t3lib . 'interfaces/interface.t3lib_localrecordlistgettablehoo
  * @subpackage tx_linkhandler
  * @access public
  */
-class tx_linkhandler_localRecordListGetTableHook implements t3lib_localRecordListGetTableHook {
+class tx_linkhandler_localRecordListGetTableHook implements \TYPO3\CMS\Backend\RecordList\RecordListGetTableHookInterface {
 
 	/**
 	 * Modifies the DB list query
@@ -47,11 +47,11 @@ class tx_linkhandler_localRecordListGetTableHook implements t3lib_localRecordLis
 	 * Default behavior is that the db list only shows the localisation parent records. If a user have set the
 	 * language settings out of the page module, so the user get the specific language of records listed.
 	 *
-	 * @param	string             the current database table
-	 * @param	integer            the record's page ID
-	 * @param	string             an additional WHERE clause
-	 * @param	string             comma separated list of selected fields
-	 * @param	localRecordList    parent localRecordList object
+	 * @param	string $table the current database table
+	 * @param	integer $pageId the record's page ID
+	 * @param	string $additionalWhereClause an additional WHERE clause
+	 * @param	string $selectedFieldsList comma separated list of selected fields
+	 * @param	localRecordList $parentObject parent localRecordList object
 	 *
 	 * @access public
 	 * @return	void
@@ -62,7 +62,7 @@ class tx_linkhandler_localRecordListGetTableHook implements t3lib_localRecordLis
 		global $TCA, $BE_USER;
 
 		if ((bool)$parentObject->localizationView === false ) {
-			$mode = t3lib_div::_GP('mode');
+			$mode = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('mode');
 
 			if ( $mode == 'wizard' || $mode == 'rte') {
 
@@ -105,10 +105,8 @@ class tx_linkhandler_localRecordListGetTableHook implements t3lib_localRecordLis
 			&&
 				array_key_exists('language', $BE_USER->uc['moduleData'][$moduleKey])
 			&&
-				((version_compare(TYPO3_version,'4.6.0','>=') && t3lib_utility_Math::convertToPositiveInteger($BE_USER->uc['moduleData'][$moduleKey]['language']) > 0)
-					|| t3lib_div::intval_positive($BE_USER->uc['moduleData'][$moduleKey]['language']) > 0)
+				(\TYPO3\CMS\Core\Utility\MathUtility::convertToPositiveInteger($BE_USER->uc['moduleData'][$moduleKey]['language']) > 0)
 			) {
-
 			$sysLanguageId = $BE_USER->uc['moduleData'][$moduleKey]['language'];
 		}
 
