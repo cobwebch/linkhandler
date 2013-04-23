@@ -105,10 +105,10 @@ class TBE_browser_recordListRTE extends \TYPO3\CMS\Backend\RecordList\ElementBro
 
 		if (@$this->browselistObj->mode=='rte') {
 			//used in RTE mode:
-			$aOnClick='return link_spec(\'' . $this->linkHandler . ':'.$table.':'.$uid.'\');"';
+			$aOnClick='return link_spec(\'' . $this->linkHandler . ':'.$table.':'.$uid.'\');';
 		} else {
 			//used in wizard mode
-			$aOnClick='return link_folder(\'' . $this->linkHandler . ':'.$table.':'.$uid.'\');"';
+			$aOnClick='return link_folder(\'' . $this->linkHandler . ':'.$table.':'.$uid.'\');';
 		}
 
 		$ATag = '<a href="#" onclick="'.$aOnClick.'">';
