@@ -84,7 +84,7 @@ class tx_linkhandler_tcemain {
  					$recordArray = $fieldArray;
 				}
 
-				if ( array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration]) && (t3lib_div::intval_positive($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0) ) {
+				if ( array_key_exists('previewPageId', $handlerConfigurationStruct[$selectedConfiguration]) && (\TYPO3\CMS\Core\Utility\MathUtility::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']) > 0) ) {
 					$previewPageId = \TYPO3\CMS\Core\Utility\MathUtility::convertToPositiveInteger($handlerConfigurationStruct[$selectedConfiguration]['previewPageId']);
 				} else {
 					$previewPageId = \TYPO3\CMS\Core\Utility\MathUtility::convertToPositiveInteger($defaultPageID);
@@ -97,7 +97,7 @@ class tx_linkhandler_tcemain {
 						// get record UID for
 					if ( array_key_exists($l18nPointer, $recordArray) && $recordArray[$l18nPointer] > 0 && $recordArray['sys_language_uid'] > 0) {
 						$id = $recordArray[$l18nPointer];
-					} elseif ( array_key_exists('t3ver_oid', $recordArray) ) // this makes no sense because we already recive the UID of the WS-Placeholder which will be the real record in the LIVE-WS
+					} elseif ( array_key_exists('t3ver_oid', $recordArray) ) // this makes no sense because we already receive the UID of the WS-Placeholder which will be the real record in the LIVE-WS
 						 $id = $recordArray['t3ver_oid'];
 
 				} else {
