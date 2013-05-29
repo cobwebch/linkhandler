@@ -33,19 +33,10 @@ if (!defined ('TYPO3_MODE'))
  * @subpackage linkhandler
  */
 
-
-// include defined interface for hook
-// (for TYPO3 4.x usage this interface is part of the patch)
-if ( version_compare(TYPO3_version, '4.2.0', '<') ) {
-	require_once \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('linkhandler') . 'patch/interfaces/interface.t3lib_browselinkshook.php';
-} else {
-	require_once PATH_t3lib . 'interfaces/interface.t3lib_browselinkshook.php';
-}
-
 require_once (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('linkhandler').'classes/class.tx_linkhandler_recordTab.php');
 
 
-class tx_linkhandler_browselinkshooks implements t3lib_browseLinksHook {
+class tx_linkhandler_browselinkshooks implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowserHookInterface {
 
 	/**
 	 * the browse_links object
