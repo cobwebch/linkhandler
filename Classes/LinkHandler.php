@@ -4,7 +4,7 @@ namespace Aoe\Linkhandler;
 /***************************************************************
  *  Copyright notice
  *
- *  Copyright (c) 2008, Daniel P�tzinger <daniel.poetzinger@aoemedia.de>
+ *  Copyright (c) 2008, Daniel Pötzinger <daniel.poetzinger@aoemedia.de>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
