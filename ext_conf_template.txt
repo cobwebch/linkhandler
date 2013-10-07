@@ -1,0 +1,3 @@
+
+# cat=basic/settings/1; type=boolean; label=Include tt_news TSConfig: If TRUE an example TSConfig for the tt_news extension will be included.
+includeTtNewsTsConfig = 0
