@@ -42,7 +42,7 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 	 *
 	 * @var string
 	 */
-	protected $additionalSearchQuery;
+	protected $additionalSearchQueries;
 
 	/**
 	 * @var \TYPO3\CMS\Rtehtmlarea\BrowseLinks
@@ -99,10 +99,13 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 	 * @return string
 	 */
 	public function makeSearchString($table, $currentPid = -1) {
+
 		$searchString = parent::makeSearchString($table, $currentPid);
-		if (!empty($this->additionalSearchQuery)) {
-			$searchString .= ' ' . $this->additionalSearchQuery;
+
+		if (!empty($this->additionalSearchQueries[$table])) {
+			$searchString .= ' ' . $this->additionalSearchQueries[$table];
 		}
+
 		return $searchString;
 	}
 
@@ -111,10 +114,11 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 	 * any other search query. Can be used to filter records, e.g.
 	 * contents with a defined CType
 	 *
+	 * @param string $table
 	 * @param string $searchQuery
 	 */
-	public function setAdditionalSearchQuery($searchQuery) {
-		$this->additionalSearchQuery = trim($searchQuery);
+	public function addAdditionalSearchQuery($table, $searchQuery) {
+		$this->additionalSearchQueries[$table] = trim($searchQuery);
 	}
 
 	/**

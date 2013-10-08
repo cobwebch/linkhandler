@@ -148,8 +148,10 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 		$recordList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Aoe\\Linkhandler\\Browser\\RecordListRte');
 		$recordList->setBrowseLinksObj($this->browseLinksObj);
 
-		if (isset($this->configuration['additionalSearchQuery'])) {
-			$recordList->setAdditionalSearchQuery($this->configuration['additionalSearchQuery']);
+		if (isset($this->configuration['additionalSearchQueries.']) && is_array($this->configuration['additionalSearchQueries.'])) {
+			foreach ($this->configuration['additionalSearchQueries.'] as $table => $searchQuery) {
+				$recordList->addAdditionalSearchQuery($table, $searchQuery);
+			}
 		}
 
 		$tables = '*';
