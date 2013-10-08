@@ -170,11 +170,21 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 
 
 	/**
-	 * returns config for a single tab
+	 * Returns config for a single tab
+	 *
+	 * @param string $tabKey
+	 * @return array
 	 */
 	public function getTabConfig($tabKey) {
-		$conf = $this->getTabsConfig();
-		return $conf[$tabKey];
+
+		$allTabsConfig = $this->getTabsConfig();
+		$conf = NULL;
+
+		if (isset($allTabsConfig[$tabKey])) {
+			 $conf = $allTabsConfig[$tabKey];
+		}
+
+		return $conf;
 	}
 
 	/**
