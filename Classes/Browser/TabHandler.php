@@ -31,10 +31,6 @@ namespace Aoe\Linkhandler\Browser;
  */
 class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 
-	/**
-	 * @var boolean
-	 */
-	protected $isRTE;
 
 	/**
 	 * @var \TYPO3\CMS\Rtehtmlarea\BrowseLinks
@@ -47,6 +43,11 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 	protected $configuration;
 
 	/**
+	 * @var ElementBrowserHook
+	 */
+	protected $elementBrowserHook;
+
+	/**
 	 * Initialize the class
 	 *
 	 * @param ElementBrowserHook $elementBrowserHook
@@ -54,10 +55,9 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 	 * @return \Aoe\Linkhandler\Browser\TabHandler
 	 */
 	public function __construct($elementBrowserHook, $activeTab) {
-		$this->browseLinksObj = $elementBrowserHook->getElementBrowser();
-		$this->isRTE = $elementBrowserHook->isRTE();
-		$this->expandPage = $this->browseLinksObj->expandPage;
-		$this->configuration = $elementBrowserHook->getTabConfig($activeTab);
+		$this->elementBrowserHook = $elementBrowserHook;
+		$this->browseLinksObj = $this->elementBrowserHook->getElementBrowser();
+		$this->configuration = $this->elementBrowserHook->getTabConfig($activeTab);
 	}
 
 	/**
@@ -115,7 +115,7 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 
 		$content = '';
 
-		if ($this->isRTE) {
+		if ($this->elementBrowserHook->isRTE()) {
 			$content .= $this->browseLinksObj->addAttributesForm();
 		}
 
