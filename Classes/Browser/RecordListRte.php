@@ -2,26 +2,26 @@
 namespace Aoe\Linkhandler\Browser;
 
 /***************************************************************
- *  Copyright notice
+ * Copyright notice
  *
- *  Copyright (c) 2008, Daniel Pötzinger <daniel.poetzinger@aoemedia.de>
- *  All rights reserved
+ * Copyright (c) 2008, Daniel Pötzinger <daniel.poetzinger@aoemedia.de>
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
+ * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -32,14 +32,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Class TBE_browser_recordListRTE extends TBE_browser_recordList
  * to return correct linkWraps for RTE link browser
  *
- * @author    Daniel Poetzinger (AOE media GmbH)
+ * @author Daniel Poetzinger (AOE media GmbH)
  */
 class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordList {
-
-	/**
-	 * @var \TYPO3\CMS\Rtehtmlarea\BrowseLinks
-	 */
-	protected $browseLinksObj;
 
 	/**
 	 * A search query that can be used to filter records, e.g.
@@ -50,13 +45,18 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 	protected $additionalSearchQuery;
 
 	/**
+	 * @var \TYPO3\CMS\Rtehtmlarea\BrowseLinks
+	 */
+	protected $browseLinksObj;
+
+	/**
 	 * Returns the title (based on $code) of a record (from table $table) with the proper link around (that is for "pages"-records a link to the level of that record...)
 	 *
-	 * @param    string $table       Table name
-	 * @param    integer $uid        UID (not used here)
-	 * @param    string  $code      Title string
-	 * @param    array   $row     Records array (from table name)
-	 * @return    string
+	 * @param string $table Table name
+	 * @param integer $uid UID (not used here)
+	 * @param string $code Title string
+	 * @param array $row Records array (from table name)
+	 * @return string
 	 */
 	function linkWrapItems($table, $uid, $code, $row) {
 
