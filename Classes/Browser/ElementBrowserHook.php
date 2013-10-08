@@ -34,12 +34,6 @@ namespace Aoe\Linkhandler\Browser;
 class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowserHookInterface {
 
 	/**
-	 * Registry of available tab handlers
-	 * @var array
-	 */
-	protected $allAvailableTabHandlers = array();
-
-	/**
 	 * @var \TYPO3\CMS\Backend\FrontendBackendUserAuthentication
 	 */
 	protected $backendUserAuth;
@@ -52,8 +46,14 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	protected $pObj;
 
 	/**
+	 * @var \Aoe\Linkhandler\Browser\TabHandlerFactory
+	 */
+	protected $tabHandlerFactory;
+
+	/**
 	 * Configurations for the different tabs, array key is the
 	 * configuration key.
+	 *
 	 * @var array
 	 */
 	protected $tabsConfig;
@@ -63,6 +63,7 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	 */
 	public function __construct() {
 		$this->backendUserAuth = $GLOBALS['BE_USER'];
+		$this->tabHandlerFactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Aoe\\Linkhandler\\Browser\\TabHandlerFactory');
 	}
 
 	/**
@@ -106,8 +107,6 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 				$this->pObj->anchorTypes[] = $key;
 			}
 		}
-
-		$this->allAvailableTabHandlers = $this->getAllRegisteredTabHandlerClassnames();
 	}
 
 	/**
@@ -119,7 +118,6 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 		} else {
 			return FALSE;
 		}
-
 	}
 
 	/**
@@ -143,26 +141,21 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	}
 
 	/**
-	 * Returns a new tab for the browse links wizard
+	 * Returns a new tab for the browse links wizard. Will be called
+	 * by the parent link browser.
 	 *
-	 * @param string $act current link selector action
+	 * @param string $activeTab current link selector action
 	 * @return string a tab for the selected link action
 	 */
-	public function getTab($act) {
+	public function getTab($activeTab) {
 
-		$configuration = $this->getTabConfig($act);
+		$configuration = $this->getTabConfig($activeTab);
 
-		if (!isset($configuration)) {
+		if (!is_array($configuration)) {
 			return FALSE;
 		}
 
-		$tabHandlerClass = 'Aoe\\Linkhandler\\Browser\\TabHandler';
-		if (class_exists($configuration['tabHandler'])) {
-			$tabHandlerClass = $configuration['tabHandler'];
-		}
-
-		/** @var TabHandlerInterface $tabHandler */
-		$tabHandler = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($tabHandlerClass, $this, $act);
+		$tabHandler = $this->tabHandlerFactory->createTabHandler($configuration, $activeTab, $this);
 		$content = $tabHandler->getTabContent();
 
 		return $content;
@@ -226,14 +219,8 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 			}
 		}
 
-		//ask the registered tabHandlers:
-		foreach ($this->allAvailableTabHandlers as $handler) {
-			$result = call_user_func($handler . '::getLinkBrowserInfoArray', $href, $this->getTabsConfig());
-			if (count($result) > 0 && is_array($result)) {
-				$info = array_merge($info, $result);
-				break;
-			}
-		}
+		$newInfo = $this->tabHandlerFactory->getLinkInfoArrayFromMatchingHandler($href, $this->getTabsConfig());
+		$info = array_merge($info, $newInfo);
 
 		return $info;
 	}
@@ -276,23 +263,6 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	protected function getTabsConfig() {
 		$this->initializeTabConfiguration();
 		return $this->tabsConfig;
-	}
-
-	/**
-	 * returns a array of names available tx_linkhandler_tabHandler
-	 */
-	protected function getAllRegisteredTabHandlerClassnames() {
-
-		$classes = array('Aoe\\Linkhandler\\Browser\\TabHandler');
-
-		if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['linkhandler/class.tx_linkhandler_browselinkshooks.php'])) {
-			foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['linkhandler/class.tx_linkhandler_browselinkshooks.php'] as $tabHandler) {
-				list($file, $class) = \TYPO3\CMS\Core\Utility\GeneralUtility::revExplode(':', $tabHandler, 2);
-				$classes[] = $class;
-			}
-		}
-
-		return $classes;
 	}
 
 	/**
