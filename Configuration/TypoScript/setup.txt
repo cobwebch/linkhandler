@@ -1,12 +1,22 @@
 plugin.tx_linkhandler {
-	tt_news {
-			# force link generation also when the tt_news record are hidden or deleted
-		forceLink = 0
 
-			# typolink settings
-		parameter        = {$linkhandler.newsSinglePid}
-		additionalParams = &tx_ttnews[tt_news]={field:uid}
-   	  	additionalParams.insertData = 1 	
-		useCacheHash = 1
+	tx_tt_news_news {
+
+		typolink {
+			// Force link generation also when the tt_news record are hidden or deleted
+			forceLink = 0
+
+			// Typolink settings
+			parameter = {$linkhandler.newsSinglePid}
+			additionalParams = &tx_ttnews[tt_news]={field:uid}
+			additionalParams.insertData = 1
+			useCacheHash = 1
+		}
+
+		// This is only required for backward compatibility and should
+		// point to the same table as the related TSConfig
+		tab {
+			listTables = tt_news
+		}
 	}
 }

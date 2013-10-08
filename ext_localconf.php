@@ -15,15 +15,16 @@ $linkhandlerExtConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][
 if (is_array($linkhandlerExtConf) && $linkhandlerExtConf['includeTtNewsTsConfig']) {
 
 	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
+
 		RTE.default.tx_linkhandler {
-			tt_news {
+			tx_tt_news_news {
 				label = News
 				listTables = tt_news
 			}
 		}
 
 		mod.tx_linkhandler {
-			tt_news {
+			tx_tt_news_news {
 				label = News
 				listTables = tt_news
 			}

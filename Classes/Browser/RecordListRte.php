@@ -61,12 +61,14 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 			$code = BackendUtility::getRecordTitlePrep($code, $this->fixedL);
 		}
 
+		$recordLink = implode(':', array('record', $this->browseLinksObj->act, $table, $row['uid']));
+
 		if (@$this->browseLinksObj->mode == 'rte') {
 			// Used in RTE mode:
-			$aOnClick = 'return link_spec(\'record:' . $table . ':' . $row['uid'] . '\');"';
+			$aOnClick = 'return link_spec(\'' . $recordLink . '\');"';
 		} else {
 			// Used in wizard mode
-			$aOnClick = 'return link_folder(\'record:' . $table . ':' . $row['uid'] . '\');"';
+			$aOnClick = 'return link_folder(\'' . $recordLink . '\');"';
 		}
 
 		$ATag = '<a href="#" onclick="' . $aOnClick . '">';

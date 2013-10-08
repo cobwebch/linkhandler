@@ -67,6 +67,7 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 	 *
 	 * @param string $href
 	 * @param array $tabsConfig
+	 * @throws \InvalidArgumentException
 	 * @return array
 	 */
 	static public function getLinkBrowserInfoArray($href, $tabsConfig) {
@@ -76,16 +77,27 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 		if (strtolower(substr($href, 0, 7)) == 'record:') {
 
 			$parts = explode(':', $href);
+			$partOffset = 1;
 
-			// check the linkhandler TSConfig and find out  which config is responsible for the current table:
-			foreach ($tabsConfig as $key => $tabConfig) {
-				if ($parts[1] == $tabConfig['listTables']) {
-					$info['act'] = $key;
+			if (count($parts) === 4) {
+				$info['act'] = $parts[1];
+			} elseif (count($parts) === 3) {
+
+				// Backward compatiblity: try to work with 3 link parts (without the configuration key part)
+				$partOffset = 0;
+
+				// Check the linkhandler TSConfig and find out  which config is responsible for the current table:
+				foreach ($tabsConfig as $key => $tabConfig) {
+					if ($parts[1] == $tabConfig['listTables']) {
+						$info['act'] = $key;
+					}
 				}
+			} else {
+				throw new \InvalidArgumentException('The href is suppsed to consist of 3 or 4 parts seperated by colon (:). The current number of parts was: ' . count($parts));
 			}
 
-			$info['recordTable'] = $parts[1];
-			$info['recordUid'] = $parts[2];
+			$info['recordTable'] = $parts[$partOffset + 1];
+			$info['recordUid'] = $parts[$partOffset + 2];
 			$info['prevent-act-override'] = TRUE;
 		}
 
