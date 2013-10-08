@@ -42,6 +42,14 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 	protected $browseLinksObj;
 
 	/**
+	 * A search query that can be used to filter records, e.g.
+	 * tt_content with a defined CType
+	 *
+	 * @var string
+	 */
+	protected $additionalSearchQuery;
+
+	/**
 	 * Returns the title (based on $code) of a record (from table $table) with the proper link around (that is for "pages"-records a link to the level of that record...)
 	 *
 	 * @param    string $table       Table name
@@ -83,6 +91,35 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 	}
 
 	/**
+	 * Calls the parent makeSearchString() method and appends the value
+	 * from the additionalSearchQuery is it is not empty.
+	 *
+	 * @param string $table
+	 * @param int $currentPid
+	 * @return string
+	 */
+	public function makeSearchString($table, $currentPid = -1) {
+		$searchString = parent::makeSearchString($table, $currentPid);
+		if (!empty($this->additionalSearchQuery)) {
+			$searchString .= ' ' . $this->additionalSearchQuery;
+		}
+		return $searchString;
+	}
+
+	/**
+	 * Setter for an additional search query that should be append to
+	 * any other search query. Can be used to filter records, e.g.
+	 * contents with a defined CType
+	 *
+	 * @param string $searchQuery
+	 */
+	public function setAdditionalSearchQuery($searchQuery) {
+		$this->additionalSearchQuery = trim($searchQuery);
+	}
+
+	/**
+	 * Setter for the calling link browser instance
+	 *
 	 * @param \TYPO3\CMS\Rtehtmlarea\BrowseLinks $browseLinksObj
 	 */
 	public function setBrowseLinksObj($browseLinksObj) {

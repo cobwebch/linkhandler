@@ -144,14 +144,19 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 			$pagetree->expandToPage($expandPage);
 		}
 
+		/** @var \Aoe\Linkhandler\Browser\RecordListRte $recordList */
+		$recordList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Aoe\\Linkhandler\\Browser\\RecordListRte');
+		$recordList->setBrowseLinksObj($this->browseLinksObj);
+
+		if (isset($this->configuration['additionalSearchQuery'])) {
+			$recordList->setAdditionalSearchQuery($this->configuration['additionalSearchQuery']);
+		}
+
 		$tables = '*';
 		if (isset($this->configuration['listTables'])) {
 			$tables = $this->configuration['listTables'];
 		}
 
-		/** @var \Aoe\Linkhandler\Browser\RecordListRte $recordList */
-		$recordList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Aoe\\Linkhandler\\Browser\\RecordListRte');
-		$recordList->setBrowseLinksObj($this->browseLinksObj);
 		$this->browseLinksObj->setRecordList($recordList);
 		$cElements = $this->browseLinksObj->TBE_expandPage($tables);
 
