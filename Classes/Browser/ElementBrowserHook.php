@@ -27,7 +27,7 @@ namespace Aoe\Linkhandler\Browser;
 /**
  * hook to adjust linkwizard (linkbrowser)
  *
- * @author    Daniel Poetzinger (AOE media GmbH)
+ * @author Daniel Poetzinger (AOE media GmbH)
  * @package TYPO3
  * @subpackage linkhandler
  */
@@ -66,7 +66,8 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	}
 
 	/**
-	 * get current href value (diffrent for RTE and normal browselinks)
+	 * Get current href value (diffrent for RTE and normal browselinks)
+	 *
 	 * @return string
 	 */
 	public function getCurrentValue() {
@@ -88,7 +89,7 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	}
 
 	/**
-	 * initializes the hook object
+	 * Initializes the hook object
 	 *
 	 * @param \TYPO3\CMS\Rtehtmlarea\BrowseLinks $pObj browse_links object
 	 * @param array $params
@@ -110,8 +111,8 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	}
 
 	/**
-	 * returns if the current linkwizard is RTE or not
-	 **/
+	 * Returns if the current linkwizard is RTE or not
+	 */
 	public function isRTE() {
 		if ($this->pObj->mode == 'rte') {
 			return TRUE;
@@ -122,9 +123,9 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	}
 
 	/**
-	 * modifies the menu definition and returns it
+	 * Modifies the menu definition and returns it
 	 *
-	 * @param array$menuDef menu definition
+	 * @param array $menuDef menu definition
 	 * @return array modified menu definition
 	 */
 	public function modifyMenuDefinition($menuDef) {
@@ -142,7 +143,7 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	}
 
 	/**
-	 * returns a new tab for the browse links wizard
+	 * Returns a new tab for the browse links wizard
 	 *
 	 * @param string $act current link selector action
 	 * @return string a tab for the selected link action
@@ -155,8 +156,7 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 			return FALSE;
 		}
 
-		//get the tabHandler
-		$tabHandlerClass = 'Aoe\\Linkhandler\\Browser\\TabHandler'; //the default tabHandler
+		$tabHandlerClass = 'Aoe\\Linkhandler\\Browser\\TabHandler';
 		if (class_exists($configuration['tabHandler'])) {
 			$tabHandlerClass = $configuration['tabHandler'];
 		}
@@ -178,7 +178,7 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	}
 
 	/**
-	 * adds new items to the currently allowed ones and returns them
+	 * Adds new items to the currently allowed ones and returns them
 	 *
 	 * @param array $allowedItems currently allowed items
 	 * @return array currently allowed items plus added items
@@ -196,18 +196,18 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	}
 
 	/**
-	 * checks the current URL and returns a info array. This is used to
-	 *    tell the link browser which is the current tab based on the current URL.
-	 *    function should at least return the $info array.
+	 * Checks the current URL and returns a info array. This is used to
+	 * tell the link browser which is the current tab based on the current URL.
+	 * function should at least return the $info array.
 	 *
-	 * @param    string $href
-	 * @param    string $siteUrl
-	 * @param    array $info        Current info array.
-	 * @return    array                $info        a infoarray for browser to tell them what is current active tab
+	 * @param string $href
+	 * @param string $siteUrl
+	 * @param array $info Current info array.
+	 * @return array $info a infoarray for browser to tell them what is current active tab
 	 */
 	public function parseCurrentUrl($href, $siteUrl, $info) {
 
-		//depending on link and setup the href string can contain complete absolute link
+		// Depending on link and setup the href string can contain complete absolute link
 		if (substr($href, 0, 7) == 'http://') {
 			if ($_href = strstr($href, '?id=')) {
 				$href = substr($_href, 4);
@@ -229,7 +229,7 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	}
 
 	/**
-	 * returns current pageid
+	 * Returns current pageid
 	 *
 	 * @return integer
 	 */
@@ -244,9 +244,9 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	}
 
 	/*
-	*	checks if $this->pObj->thisConfig['tx_linkhandler.'] is set, and if not it trys to load default from
+	*	Checks if $this->pObj->thisConfig['tx_linkhandler.'] is set, and if not it trys to load default from
 	*	TSConfig key mod.tx_linkhandler.
-	*	(in case the hook is called from a RTE, this configuration might exist because it is configured in RTE.defaul.tx_linkhandler)
+	*	(in case the hook is called from a RTE, this configuration might exist because it is configured in RTE.default.tx_linkhandler)
 	*		In mode RTE: the parameter RTEtsConfigParams have to exist
 	*		In mode WIzard: the parameter P[pid] have to exist
 	*/
@@ -261,8 +261,8 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	}
 
 	/**
-	 * returns the complete configuration (tsconfig) of all tabs
-	 **/
+	 * Returns the complete configuration (tsconfig) of all tabs
+	 */
 	protected function getTabsConfig() {
 		$this->initializeTabConfiguration();
 		return $this->tabsConfig;

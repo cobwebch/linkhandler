@@ -67,8 +67,6 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 	 *
 	 * @param string $href
 	 * @param array $tabsConfig
-	 * @access public
-	 * @static
 	 * @return array
 	 */
 	static public function getLinkBrowserInfoArray($href, $tabsConfig) {
@@ -121,10 +119,12 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 			$content .= $this->browseLinksObj->addAttributesForm();
 		}
 
-		/** @var PageTree $pagetree */
+		/** @var \Aoe\Linkhandler\Browser\PageTree $pagetree */
+		/** @var \TYPO3\CMS\Core\Authentication\BackendUserAuthentication $beUser */
+		$beUser = $GLOBALS['BE_USER'];
 		$pagetree = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Aoe\\Linkhandler\\Browser\\PageTree');
-		$pagetree->ext_showNavTitle = $GLOBALS['BE_USER']->getTSConfigVal('options.pageTree.showNavTitle');
-		$pagetree->ext_showPageId = $GLOBALS['BE_USER']->getTSConfigVal('options.pageTree.showPageIdWithTitle');
+		$pagetree->ext_showNavTitle = $beUser->getTSConfigVal('options.pageTree.showNavTitle');
+		$pagetree->ext_showPageId = $beUser->getTSConfigVal('options.pageTree.showPageIdWithTitle');
 		$pagetree->addField('nav_title');
 
 		$pm = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('PM');
@@ -144,8 +144,11 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 		$cElements = $this->browseLinksObj->TBE_expandPage($tables);
 
 		// Outputting Temporary DB mount notice:
-		if (intval($GLOBALS['BE_USER']->getSessionData('pageTree_temporaryMountPoint'))) {
-			$link = '<a href="' . htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::linkThisScript(array('setTempDBmount' => 0))) . '">' . $GLOBALS['LANG']->sl('LLL:EXT:lang/locallang_core.xlf:labels.temporaryDBmount', 1) . '</a>';
+		$dbmount = '';
+		/** @var \TYPO3\CMS\Lang\LanguageService $lang */
+		$lang = $GLOBALS['LANG'];
+		if (intval($beUser->getSessionData('pageTree_temporaryMountPoint'))) {
+			$link = '<a href="' . htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::linkThisScript(array('setTempDBmount' => 0))) . '">' . $lang->sl('LLL:EXT:lang/locallang_core.xlf:labels.temporaryDBmount', 1) . '</a>';
 			$flashMessage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessage', $link, '', \TYPO3\CMS\Core\Messaging\FlashMessage::INFO);
 			$dbmount = $flashMessage->render();
 		}
@@ -155,7 +158,7 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 			-->
 					<table border="0" cellpadding="0" cellspacing="0" id="typo3-linkPages">
 						<tr>
-							<td class="c-wCell" valign="top">' . $this->browseLinksObj->barheader(($GLOBALS['LANG']->getLL('pageTree') . ':')) . $dbmount . $pagetree->getBrowsableTree() . '</td>
+							<td class="c-wCell" valign="top">' . $this->browseLinksObj->barheader(($lang->getLL('pageTree') . ':')) . $dbmount . $pagetree->getBrowsableTree() . '</td>
 							<td class="c-wCell" valign="top">' . $cElements . '</td>
 						</tr>
 					</table>

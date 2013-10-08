@@ -52,17 +52,20 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 	 */
 	function linkWrapItems($table, $uid, $code, $row) {
 
+		/** @var \TYPO3\CMS\Lang\LanguageService $lang */
+		$lang = $GLOBALS['LANG'];
+
 		if (!$code) {
-			$code = '<i>[' . $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_core.xlf:labels.no_title', 1) . ']</i>';
+			$code = '<i>[' . $lang->sL('LLL:EXT:lang/locallang_core.xlf:labels.no_title', 1) . ']</i>';
 		} else {
 			$code = BackendUtility::getRecordTitlePrep($code, $this->fixedL);
 		}
 
 		if (@$this->browseLinksObj->mode == 'rte') {
-			//used in RTE mode:
+			// Used in RTE mode:
 			$aOnClick = 'return link_spec(\'record:' . $table . ':' . $row['uid'] . '\');"';
 		} else {
-			//used in wizard mode
+			// Used in wizard mode
 			$aOnClick = 'return link_folder(\'record:' . $table . ':' . $row['uid'] . '\');"';
 		}
 
@@ -74,7 +77,7 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 			$blinkArrow = '<img' . \TYPO3\CMS\Backend\Utility\IconUtility::skinImg($GLOBALS['BACK_PATH'], 'gfx/blinkarrow_right.gif', 'width="5" height="9"') . ' class="c-blinkArrowL" alt="" />';
 		}
 
-		return $ATag . '<img' . IconUtility::skinImg($GLOBALS['BACK_PATH'], 'gfx/plusbullet2.gif', 'width="18" height="16"') . ' title="' . $GLOBALS['LANG']->getLL('addToList', 1) . '" alt="" />' . $ATag_e . $ATag . $code . $blinkArrow . $ATag_e;
+		return $ATag . '<img' . IconUtility::skinImg($GLOBALS['BACK_PATH'], 'gfx/plusbullet2.gif', 'width="18" height="16"') . ' title="' . $lang->getLL('addToList', 1) . '" alt="" />' . $ATag_e . $ATag . $code . $blinkArrow . $ATag_e;
 	}
 
 	/**
