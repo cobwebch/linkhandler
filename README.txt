@@ -1,2 +1,3 @@
+Extension manual:
 
-Feel free to add some documentation or simply add a link to the online manual.
+http://docs.typo3.org/typo3cms/extensions/linkhandler/0.3.1/
