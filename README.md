@@ -10,3 +10,5 @@ Note that this version is strictly for TYPO3 6.0 and is not compatible
 with lower versions (I didn't bother with adding a compatibility layer).
 
 The official project is located at http://forge.typo3.org/projects/extension-linkhandler
+
+The extension manual can be found here: http://docs.typo3.org/typo3cms/extensions/linkhandler/0.3.1/
