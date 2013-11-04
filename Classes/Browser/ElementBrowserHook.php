@@ -39,6 +39,11 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	protected $backendUserAuth;
 
 	/**
+	 * @var \TYPO3\CMS\Lang\LanguageService
+	 */
+	protected $languageService;
+
+	/**
 	 * the browse_links object
 	 *
 	 * @var \TYPO3\CMS\Rtehtmlarea\BrowseLinks
@@ -63,6 +68,7 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	 */
 	public function __construct() {
 		$this->backendUserAuth = $GLOBALS['BE_USER'];
+		$this->languageService = $GLOBALS['LANG'];
 		$this->tabHandlerFactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Aoe\\Linkhandler\\Browser\\TabHandlerFactory');
 	}
 
@@ -132,7 +138,7 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 
 		foreach ($tabs as $key => $tabConfig) {
 			$menuDef[$key]['isActive'] = $this->pObj->act == $key;
-			$menuDef[$key]['label'] = $tabConfig['label'];
+			$menuDef[$key]['label'] = $this->languageService->sL($tabConfig['label'], TRUE);
 			$menuDef[$key]['url'] = '#';
 			$menuDef[$key]['addParams'] = 'onclick="jumpToUrl(\'?act=' . $key . '\');return false;"';
 		}
