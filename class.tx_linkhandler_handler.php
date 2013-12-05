@@ -122,14 +122,14 @@ class tx_linkhandler_handler {
 	 * @author Michael Klapper <michael.klapper@aoemedia.de>
 	 */
 	protected function getCurrentRecord($recordTableName, $recordUid) {
-		
+
 		static $cache = array();
 		$parameterHash = $recordTableName.intval($recordUid);
-		
+
 		if (isset($cache[$parameterHash])) {
 			return $cache[$parameterHash];
 		}
-		
+
 		$recordArray = array();
 			// check for l18n_parent and fix the recordRow
 		$l18nPointer = ( array_key_exists('transOrigPointerField', $GLOBALS['TCA'][$recordTableName]['ctrl']) )
@@ -141,7 +141,7 @@ class tx_linkhandler_handler {
 		if ( is_array($recordArray) && (array_key_exists($l18nPointer, $recordArray) && $recordArray[$l18nPointer] > 0 && $recordArray['sys_language_uid'] > 0) ) {
 			$recordArray = $GLOBALS['TSFE']->sys_page->getRawRecord($recordTableName, $recordArray[$l18nPointer]);
 		}
-		
+
 		$cache[$parameterHash] = $recordArray;
 		return $recordArray;
 	}
@@ -192,6 +192,8 @@ class tx_linkhandler_handler {
 		 * @internal Merge the linkhandler configuration from $linkConfigArray with the current $typoLinkConfiguration.
 		 */
 		if ( is_array($typoLinkConfigurationArray) && !empty($typoLinkConfigurationArray) ) {
+			if ( array_key_exists('parameter', $typoLinkConfigurationArray) )
+				unset($typoLinkConfigurationArray['parameter']);
 			if ( array_key_exists('parameter.', $typoLinkConfigurationArray) )
 				unset($typoLinkConfigurationArray['parameter.']);
 
