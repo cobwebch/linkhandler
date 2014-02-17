@@ -175,14 +175,14 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 			<!--
 				Wrapper table for page tree / record list:
 			-->
-					<table border="0" cellpadding="0" cellspacing="0" id="typo3-linkPages">
-						<tr>
-							<td class="c-wCell" valign="top">' . $this->browseLinksObj->barheader(($lang->getLL('pageTree') . ':')) . $dbmount . $pagetree->getBrowsableTree() . '</td>
-							<td class="c-wCell" valign="top">' . $cElements . '</td>
-						</tr>
-					</table>
+			<table border="0" cellpadding="0" cellspacing="0" id="typo3-linkPages" class="tx-linkbrowser-tab">
+				<tr>
+					<td class="c-wCell" valign="top">' . $this->browseLinksObj->barheader(($lang->getLL('pageTree') . ':')) . $dbmount . $pagetree->getBrowsableTree() . '</td>
+					<td class="c-wCell" valign="top">' . $cElements . '</td>
+				</tr>
+			</table>
+		';
 
-					';
 		return $content;
 	}
 }

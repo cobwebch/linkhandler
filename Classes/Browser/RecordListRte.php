@@ -87,7 +87,7 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 			$blinkArrow = '<img' . \TYPO3\CMS\Backend\Utility\IconUtility::skinImg($GLOBALS['BACK_PATH'], 'gfx/blinkarrow_right.gif', 'width="5" height="9"') . ' class="c-blinkArrowL" alt="" />';
 		}
 
-		return $ATag . '<img' . IconUtility::skinImg($GLOBALS['BACK_PATH'], 'gfx/plusbullet2.gif', 'width="18" height="16"') . ' title="' . $lang->getLL('addToList', 1) . '" alt="" />' . $ATag_e . $ATag . $code . $blinkArrow . $ATag_e;
+		return $ATag . $code . $blinkArrow . $ATag_e;
 	}
 
 	/**
@@ -128,5 +128,45 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 	 */
 	public function setBrowseLinksObj($browseLinksObj) {
 		$this->browseLinksObj = $browseLinksObj;
+	}
+
+	/**
+	 * Creates the listing of records from a single table
+	 *
+	 * @param string $table Table name
+	 * @param integer $id Page id
+	 * @param string $rowlist List of fields to show in the listing. Pseudo fields will be added including the record header.
+	 * @return string HTML table with the listing for the record.
+	 */
+	public function getTable($table, $id, $rowlist) {
+
+		// Prevent display of clipboard / _REF_ columnm
+		$this->dontShowClipControlPanels = TRUE;
+
+		// Prevent display of edit buttons
+		$this->calcPerms = FALSE;
+
+		return parent::getTable($table, $id, $rowlist);
+	}
+
+	/**
+	 * Prevent the display of the field select box.
+	 *
+	 * @param string $table Table name
+	 * @param bool $formFields If TRUE, form-fields will be wrapped around the table.
+	 * @return string HTML table with the selector box (name: displayFields['.$table.'][])
+	 */
+	public function fieldSelectBox($table, $formFields = TRUE) {
+		return '';
+	}
+
+	/**
+	 * Prevent the display of the search box.
+	 *
+	 * @param bool $formFields If TRUE, the search box is wrapped in its own form-tags
+	 * @return string HTML for the search box
+	 */
+	public function getSearchBox($formFields = TRUE) {
+		return '';
 	}
 }
