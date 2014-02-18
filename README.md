@@ -57,6 +57,25 @@ mod.tx_linkhandler.tx_myext_imagelinks {
 * When editing a link the correct tab will open automatically.
 * The searchbox below the record list can be disabled by setting ```enableSearchBox = 0``` in the tab configuration in TSConfig.
 
+## Tips & Tricks
+
+### Link browser width
+
+You can use TSConfig to increase the with of the link browser windows in the Backend to prevent problem with the styles:
+
+```
+RTE {
+	default {
+		buttons {
+			link {
+				dialogueWindow {
+					width = 600
+				}
+			}
+		}
+	}
+}
+```
 
 ## Warning
 
