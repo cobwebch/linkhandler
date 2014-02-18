@@ -154,6 +154,10 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 			}
 		}
 
+		if (isset($this->configuration['enableSearchBox'])) {
+			$recordList->setEnableSearchBox($this->configuration['enableSearchBox']);
+		}
+
 		$tables = '*';
 		if (isset($this->configuration['listTables'])) {
 			$tables = $this->configuration['listTables'];

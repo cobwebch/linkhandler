@@ -50,6 +50,13 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 	protected $browseLinksObj;
 
 	/**
+	 * If this is TRUE the searchbox will be rendered after the list.
+	 *
+	 * @var bool
+	 */
+	protected $enableSearchBox = TRUE;
+
+	/**
 	 * Returns the title (based on $code) of a record (from table $table) with the proper link around (that is for "pages"-records a link to the level of that record...)
 	 *
 	 * @param string $table Table name
@@ -167,6 +174,20 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 	 * @return string HTML for the search box
 	 */
 	public function getSearchBox($formFields = TRUE) {
-		return '';
+		$searchBox = '';
+		if ($this->enableSearchBox) {
+			$searchBox = parent::getSearchBox($formFields);
+		}
+		return $searchBox;
+	}
+
+	/**
+	 * Set this to FALSE to disable the search box that is enabled by default.
+	 *
+	 * @param bool $enableSeachBox
+	 * @return void
+	 */
+	public function setEnableSearchBox($enableSeachBox) {
+		$this->enableSearchBox = (bool)$enableSeachBox;
 	}
 }
