@@ -23,12 +23,5 @@ if (is_array($linkhandlerExtConf) && $linkhandlerExtConf['includeTtNewsTsConfig'
 				listTables = tt_news
 			}
 		}
-
-		mod.tx_linkhandler {
-			tx_tt_news_news {
-				label = News
-				listTables = tt_news
-			}
-		}
 	');
 }
