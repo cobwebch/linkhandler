@@ -21,8 +21,13 @@ namespace Aoe\Linkhandler\Browser;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
- * Configuration helper
+ * Helper class for instantiating tab handlers.
+ *
+ * @author Daniel Pötzinger <daniel.poetzinger@aoemedia.de>
+ * @author Alexander Stehlik <astehlik.deleteme@intera.de>
  */
 class TabHandlerFactory implements \TYPO3\CMS\Core\SingletonInterface {
 
@@ -32,27 +37,8 @@ class TabHandlerFactory implements \TYPO3\CMS\Core\SingletonInterface {
 	protected $tabHandlerClassnames = NULL;
 
 	/**
-	 * Runs through the given TypoScript configuration and builds tab
-	 * configurations from it. Can be used to prepare the configuration
-	 * for the call to getLinkInfoArrayFromMatchingHandler
+	 * Builds a tab handler instance and provides its configuration.
 	 *
-	 * @param array $typoScript
-	 * @return array
-	 */
-	public function buildTabConfigurationsFromTypoScript($typoScript) {
-
-		$tabConfigurations = array();
-
-		foreach ($typoScript as $key => $possibleTabConfig) {
-			if (is_array($possibleTabConfig['tab.'])) {
-				$tabConfigurations[rtrim($key, '.')] = $possibleTabConfig['tab.'];
-			}
-		}
-
-		return $tabConfigurations;
-	}
-
-	/**
 	 * @param array $configuration
 	 * @param string $activeTab
 	 * @param ElementBrowserHook $elementBrowserHook
@@ -72,43 +58,21 @@ class TabHandlerFactory implements \TYPO3\CMS\Core\SingletonInterface {
 	}
 
 	/**
-	 * Returns a array of names available tx_linkhandler_tabHandler
-	 *
-	 * @return array
-	 */
-	public function getAllRegisteredTabHandlerClassnames() {
-
-		if (!isset($this->tabHandlerClassnames)) {
-
-			$this->tabHandlerClassnames = array('Aoe\\Linkhandler\\Browser\\TabHandler');
-
-			if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['linkhandler/class.tx_linkhandler_browselinkshooks.php'])) {
-				foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['linkhandler/class.tx_linkhandler_browselinkshooks.php'] as $tabHandler) {
-					list(, $class) = \TYPO3\CMS\Core\Utility\GeneralUtility::revExplode(':', $tabHandler, 2);
-					$this->tabHandlerClassnames[] = $class;
-				}
-			}
-		}
-
-		return $this->tabHandlerClassnames;
-	}
-
-	/**
 	 * Runs through all configured tab handlers and calls the
 	 * getLinkBrowserInfoArray() method. If it returns a non empty array
 	 * it will return this value.
 	 *
 	 * @param string $href
-	 * @param array $tabsConfiguration
 	 * @return array
 	 */
-	public function getLinkInfoArrayFromMatchingHandler($href, $tabsConfiguration) {
+	public function getLinkInfoArrayFromMatchingHandler($href) {
 
 		$result = array();
+		$configurationManager = $this->getConfigurationManager();
 
-		foreach ($this->getAllRegisteredTabHandlerClassnames() as $handler) {
+		foreach ($configurationManager->getAllRegisteredTabHandlerClassnames() as $handler) {
 
-			$result = call_user_func($handler . '::getLinkBrowserInfoArray', $href, $tabsConfiguration);
+			$result = call_user_func($handler . '::getLinkBrowserInfoArray', $href, $configurationManager->getTabsConfiguration());
 
 			if (is_array($result) && count($result) > 0) {
 				break;
@@ -116,5 +80,12 @@ class TabHandlerFactory implements \TYPO3\CMS\Core\SingletonInterface {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * @return \Aoe\Linkhandler\ConfigurationManager
+	 */
+	protected function getConfigurationManager() {
+		return GeneralUtility::makeInstance('Aoe\\Linkhandler\\ConfigurationManager');
 	}
 }

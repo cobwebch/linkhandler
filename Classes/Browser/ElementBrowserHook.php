@@ -1,42 +1,46 @@
 <?php
 namespace Aoe\Linkhandler\Browser;
 
-/***************************************************************
- *  Copyright notice
- *
- *  Copyright (c) 2008, Daniel Pötzinger <daniel.poetzinger@aoemedia.de>
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+/*                                                                        *
+ * This script belongs to the TYPO3 extension "linkhandler".              *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License as published by the Free   *
+ * Software Foundation, either version 3 of the License, or (at your      *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        *
+ * You should have received a copy of the GNU General Public License      *
+ * along with the script.                                                 *
+ * If not, see http://www.gnu.org/licenses/gpl.html                       *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
+use \TYPO3\CMS\Core\ElementBrowser\ElementBrowserHookInterface;
+use \TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * hook to adjust linkwizard (linkbrowser)
+ * Hook to adjust linkwizard (linkbrowser).
  *
- * @author Daniel Poetzinger (AOE media GmbH)
- * @package TYPO3
- * @subpackage linkhandler
+ * @author Daniel Pötzinger <daniel.poetzinger@aoemedia.de>
+ * @author Alexander Stehlik <astehlik.deleteme@intera.de>
  */
-class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowserHookInterface {
+class ElementBrowserHook implements ElementBrowserHookInterface {
 
 	/**
 	 * @var \TYPO3\CMS\Backend\FrontendBackendUserAuthentication
 	 */
 	protected $backendUserAuth;
+
+	/**
+	 * @var \Aoe\Linkhandler\ConfigurationManager
+	 */
+	protected $configurationManager;
 
 	/**
 	 * @var \TYPO3\CMS\Lang\LanguageService
@@ -69,7 +73,37 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	public function __construct() {
 		$this->backendUserAuth = $GLOBALS['BE_USER'];
 		$this->languageService = $GLOBALS['LANG'];
-		$this->tabHandlerFactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Aoe\\Linkhandler\\Browser\\TabHandlerFactory');
+		$this->configurationManager = GeneralUtility::makeInstance('Aoe\\Linkhandler\\ConfigurationManager');
+		$this->tabHandlerFactory = GeneralUtility::makeInstance('Aoe\\Linkhandler\\Browser\\TabHandlerFactory');
+	}
+
+	/**
+	 * Adds new items to the currently allowed ones and returns them
+	 *
+	 * @param array $allowedItems currently allowed items
+	 * @return array currently allowed items plus added items
+	 */
+	public function addAllowedItems($allowedItems) {
+
+		foreach ($this->configurationManager->getTabsConfiguration() as $name => $tabConfig) {
+			$allowedItems[] = $name;
+		}
+
+		return $allowedItems;
+	}
+
+	/**
+	 * Returns current pageid
+	 *
+	 * @return int
+	 */
+	public function getCurrentPageId() {
+		if ($this->isRTE()) {
+			$confParts = explode(':', $this->pObj->RTEtsConfigParams);
+			return $confParts[5];
+		} else {
+			return NULL;
+		}
 	}
 
 	/**
@@ -96,6 +130,27 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	}
 
 	/**
+	 * Returns a new tab for the browse links wizard. Will be called
+	 * by the parent link browser.
+	 *
+	 * @param string $activeTab current link selector action
+	 * @return string a tab for the selected link action
+	 */
+	public function getTab($activeTab) {
+
+		$configuration = $this->configurationManager->getSingleTabConfiguration($activeTab);
+
+		if (!is_array($configuration)) {
+			return FALSE;
+		}
+
+		$tabHandler = $this->tabHandlerFactory->createTabHandler($configuration, $activeTab, $this);
+		$content = $tabHandler->getTabContent();
+
+		return $content;
+	}
+
+	/**
 	 * Initializes the hook object
 	 *
 	 * @param \TYPO3\CMS\Rtehtmlarea\BrowseLinks $pObj browse_links object
@@ -105,11 +160,13 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	public function init($pObj, $params) {
 
 		$this->pObj = $pObj;
-		$this->checkConfigAndGetDefault();
-		$tabs = $this->getTabsConfig();
+
+		$currentPid = $this->getCurrentPageId();
+		$activeConfiguration = is_array($this->pObj->thisConfig['tx_linkhandler.']) ? $this->pObj->thisConfig['tx_linkhandler.'] : NULL;
+		$this->configurationManager->loadConfiguration($activeConfiguration, $currentPid);
 
 		if ($this->isRTE()) {
-			foreach ($tabs as $key => $tabConfig) {
+			foreach ($this->configurationManager->getTabsConfiguration() as $key => $tabConfig) {
 				$this->pObj->anchorTypes[] = $key;
 			}
 		}
@@ -134,7 +191,7 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 	 */
 	public function modifyMenuDefinition($menuDef) {
 
-		$tabs = $this->getTabsConfig();
+		$tabs = $this->configurationManager->getTabsConfiguration();
 
 		foreach ($tabs as $key => $tabConfig) {
 			$menuDef[$key]['isActive'] = $this->pObj->act == $key;
@@ -144,64 +201,6 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 		}
 
 		return $menuDef;
-	}
-
-	/**
-	 * Returns a new tab for the browse links wizard. Will be called
-	 * by the parent link browser.
-	 *
-	 * @param string $activeTab current link selector action
-	 * @return string a tab for the selected link action
-	 */
-	public function getTab($activeTab) {
-
-		$configuration = $this->getTabConfig($activeTab);
-
-		if (!is_array($configuration)) {
-			return FALSE;
-		}
-
-		$tabHandler = $this->tabHandlerFactory->createTabHandler($configuration, $activeTab, $this);
-		$content = $tabHandler->getTabContent();
-
-		return $content;
-	}
-
-
-	/**
-	 * Returns config for a single tab
-	 *
-	 * @param string $tabKey
-	 * @return array
-	 */
-	public function getTabConfig($tabKey) {
-
-		$allTabsConfig = $this->getTabsConfig();
-		$conf = NULL;
-
-		if (isset($allTabsConfig[$tabKey])) {
-			 $conf = $allTabsConfig[$tabKey];
-		}
-
-		return $conf;
-	}
-
-	/**
-	 * Adds new items to the currently allowed ones and returns them
-	 *
-	 * @param array $allowedItems currently allowed items
-	 * @return array currently allowed items plus added items
-	 */
-	public function addAllowedItems($allowedItems) {
-		if (is_array($this->pObj->thisConfig['tx_linkhandler.'])) {
-			foreach ($this->pObj->thisConfig['tx_linkhandler.'] as $name => $tabConfig) {
-				if (is_array($tabConfig)) {
-					$key = substr($name, 0, -1);
-					$allowedItems[] = $key;
-				}
-			}
-		}
-		return $allowedItems;
 	}
 
 	/**
@@ -225,91 +224,9 @@ class ElementBrowserHook implements \TYPO3\CMS\Core\ElementBrowser\ElementBrowse
 			}
 		}
 
-		$newInfo = $this->tabHandlerFactory->getLinkInfoArrayFromMatchingHandler($href, $this->getTabsConfig());
+		$newInfo = $this->tabHandlerFactory->getLinkInfoArrayFromMatchingHandler($href);
 		$info = array_merge($info, $newInfo);
 
 		return $info;
-	}
-
-	/**
-	 * Returns current pageid
-	 *
-	 * @return integer
-	 */
-	public function getCurrentPageId() {
-		if ($this->isRTE()) {
-			$confParts = explode(':', $this->pObj->RTEtsConfigParams);
-			return $confParts[5];
-		} else {
-			$P = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('P');
-			return $P['pid'];
-		}
-	}
-
-	/*
-	*	Checks if $this->pObj->thisConfig['tx_linkhandler.'] is set, and if not it trys to load default from
-	*	TSConfig key mod.tx_linkhandler.
-	*	(in case the hook is called from a RTE, this configuration might exist because it is configured in RTE.default.tx_linkhandler)
-	*		In mode RTE: the parameter RTEtsConfigParams have to exist
-	*		In mode WIzard: the parameter P[pid] have to exist
-	*/
-	protected function checkConfigAndGetDefault() {
-
-		$currentPid = $this->getCurrentPageId();
-
-		if (!is_array($this->pObj->thisConfig['tx_linkhandler.'])) {
-			$modTSconfig = $this->backendUserAuth->getTSConfig("mod.tx_linkhandler", \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig($currentPid));
-			$this->pObj->thisConfig['tx_linkhandler.'] = $modTSconfig['properties'];
-		}
-	}
-
-	/**
-	 * Returns the complete configuration (tsconfig) of all tabs
-	 */
-	protected function getTabsConfig() {
-		$this->initializeTabConfiguration();
-		return $this->tabsConfig;
-	}
-
-	/**
-	 * Initializes the configuration of all configured tabs
-	 */
-	protected function initializeTabConfiguration() {
-
-		if (isset($this->tabsConfig)) {
-			return;
-		}
-
-		$this->tabsConfig = array();
-
-		if (is_array($this->pObj->thisConfig['tx_linkhandler.'])) {
-			foreach ($this->pObj->thisConfig['tx_linkhandler.'] as $name => $tabConfig) {
-				if (is_array($tabConfig)) {
-					$key = substr($name, 0, -1);
-					$this->tabsConfig[$key] = $tabConfig;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Returns TRUE if the given key is a valid link handler configuration
-	 * key
-	 *
-	 * @param string $key
-	 * @return bool
-	 */
-	protected function isOneOfLinkhandlerTabs($key) {
-
-		foreach ($this->pObj->thisConfig['tx_linkhandler.'] as $name => $tabConfig) {
-
-			if (is_array($tabConfig)) {
-				$akey = substr($name, 0, -1);
-				if ($akey == $key)
-					return TRUE;
-			}
-		}
-
-		return FALSE;
 	}
 }

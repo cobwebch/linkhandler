@@ -24,13 +24,22 @@ namespace Aoe\Linkhandler\Browser;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use \Aoe\Linkhandler\Browser\TabHandlerInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Hook to adjust linkwizard (linkbrowser)
  *
  * @author Daniel Poetzinger (AOE media GmbH)
  */
-class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
+class TabHandler implements TabHandlerInterface {
 
+	/**
+	 * Configuration key of the active tab.
+	 *
+	 * @var string
+	 */
+	protected $activeTabKey;
 
 	/**
 	 * @var \TYPO3\CMS\Rtehtmlarea\BrowseLinks
@@ -38,14 +47,16 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 	protected $browseLinksObj;
 
 	/**
-	 * @var array
-	 */
-	protected $configuration;
-
-	/**
 	 * @var ElementBrowserHook
 	 */
 	protected $elementBrowserHook;
+
+	/**
+	 * The configuration for this tab.
+	 *
+	 * @var array
+	 */
+	protected $tabConfiguration;
 
 	/**
 	 * Initialize the class
@@ -57,7 +68,10 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 	public function __construct($elementBrowserHook, $activeTab) {
 		$this->elementBrowserHook = $elementBrowserHook;
 		$this->browseLinksObj = $this->elementBrowserHook->getElementBrowser();
-		$this->configuration = $this->elementBrowserHook->getTabConfig($activeTab);
+
+		/** @var \Aoe\Linkhandler\ConfigurationManager $configurationManager */
+		$configurationManager = GeneralUtility::makeInstance('Aoe\\Linkhandler\\ConfigurationManager');
+		$this->tabConfiguration = $configurationManager->getSingleTabConfiguration($activeTab);
 	}
 
 	/**
@@ -148,19 +162,19 @@ class TabHandler implements \Aoe\Linkhandler\Browser\TabHandlerInterface {
 		$recordList = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Aoe\\Linkhandler\\Browser\\RecordListRte');
 		$recordList->setBrowseLinksObj($this->browseLinksObj);
 
-		if (isset($this->configuration['additionalSearchQueries.']) && is_array($this->configuration['additionalSearchQueries.'])) {
-			foreach ($this->configuration['additionalSearchQueries.'] as $table => $searchQuery) {
+		if (isset($this->tabConfiguration['additionalSearchQueries.']) && is_array($this->tabConfiguration['additionalSearchQueries.'])) {
+			foreach ($this->tabConfiguration['additionalSearchQueries.'] as $table => $searchQuery) {
 				$recordList->addAdditionalSearchQuery($table, $searchQuery);
 			}
 		}
 
-		if (isset($this->configuration['enableSearchBox'])) {
-			$recordList->setEnableSearchBox($this->configuration['enableSearchBox']);
+		if (isset($this->tabConfiguration['enableSearchBox'])) {
+			$recordList->setEnableSearchBox($this->tabConfiguration['enableSearchBox']);
 		}
 
 		$tables = '*';
-		if (isset($this->configuration['listTables'])) {
-			$tables = $this->configuration['listTables'];
+		if (isset($this->tabConfiguration['listTables'])) {
+			$tables = $this->tabConfiguration['listTables'];
 		}
 
 		$this->browseLinksObj->setRecordList($recordList);
