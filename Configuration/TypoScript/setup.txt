@@ -12,11 +12,5 @@ plugin.tx_linkhandler {
 			additionalParams.insertData = 1
 			useCacheHash = 1
 		}
-
-		// This is only required for backward compatibility and should
-		// point to the same table as the related TSConfig
-		tab {
-			listTables = tt_news
-		}
 	}
 }
