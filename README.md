@@ -56,6 +56,7 @@ mod.tx_linkhandler.tx_myext_imagelinks {
 
 * When editing a link the correct tab will open automatically.
 * The searchbox below the record list can be disabled by setting ```enableSearchBox = 0``` in the tab configuration in TSConfig.
+* SoftReference handling using signal slots, TYPO3 patch pending: https://review.typo3.org/27746/
 
 ## Tips & Tricks
 
@@ -77,8 +78,7 @@ RTE {
 }
 ```
 
-## Warning
+## Missing Feature
 
-Warning!
-Some of the new features are still missing, like softrefs and the
-modification of the "Save and show" button.
+The last missing feature in this version is the handling of the "Save and show" button.
+
