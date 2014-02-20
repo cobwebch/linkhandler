@@ -10,6 +10,12 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_content.php']['typo
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/rtehtmlarea/mod3/class.tx_rtehtmlarea_browse_links.php']['browseLinksHook'][] = 'Aoe\\Linkhandler\\Browser\\ElementBrowserHook';
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.browse_links.php']['browseLinksHook'][] = 'Aoe\\Linkhandler\\Browser\\ElementBrowserHook';
 
+// Register signal slots
+/** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
+$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
+$signalSlotDispatcher->connect('TYPO3\\CMS\\Core\\Database\\SoftReferenceIndex', 'getTypoLinkParts', 'Aoe\\Linkhandler\\SoftReferenceHandler', 'getTypoLinkParts', FALSE);
+$signalSlotDispatcher->connect('TYPO3\\CMS\\Core\\Database\\SoftReferenceIndex', 'setTypoLinkPartsElement', 'Aoe\\Linkhandler\\SoftReferenceHandler', 'setTypoLinkPartsElement', FALSE);
+
 // This hook is needed until https://review.typo3.org/27680/ is merged to open the correct tab in the link browser.
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_parsehtml_proc.php']['modifyParams_LinksRte_PostProc'][] = 'Aoe\\Linkhandler\\RteParserHook';
 
