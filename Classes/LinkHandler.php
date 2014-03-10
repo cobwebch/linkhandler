@@ -21,13 +21,16 @@ namespace Aoe\Linkhandler;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\CMS\Core\SingletonInterface;
+
 /**
  * Linkhandler to process custom linking to any kind of configured record.
  *
  * @author Daniel Pötzinger <daniel.poetzinger@aoemedia.de>
  * @author Michael Klapper <michael.klapper@aoemedia.de>
+ * @author Alexander Stehlik <astehlik.deleteme@intera.de>
  */
-class LinkHandler {
+class LinkHandler implements SingletonInterface {
 
 	/**
 	 * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
@@ -68,6 +71,11 @@ class LinkHandler {
 	public $linkText;
 
 	/**
+	 * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
+	 */
+	protected $localContentObjectRenderer;
+
+	/**
 	 * Configuration that will be passed to the typolink function
 	 * @var array
 	 */
@@ -102,6 +110,7 @@ class LinkHandler {
 	public function __construct() {
 		$this->tsfe = $GLOBALS['TSFE'];
 		$this->tabHandlerFactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Aoe\\Linkhandler\\Browser\\TabHandlerFactory');
+		$this->localContentObjectRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
 	}
 
 	/**
@@ -161,15 +170,11 @@ class LinkHandler {
 
 		// Extract link params like "target", "css-class" or "title"
 		$furtherLinkParams = str_replace($this->linkHandlerKey, '', $this->linkParameters);
-
-		/** @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer $localcObj */
-		$localcObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
-		$localcObj->start($this->recordRow, '');
-
 		$this->typolinkConfiguration['parameter'] .= $furtherLinkParams;
 
 		// Build the full link to the record
-		return $localcObj->typoLink($this->linkText, $this->typolinkConfiguration);
+		$this->localContentObjectRenderer->start($this->recordRow, '');
+		return $this->localContentObjectRenderer->typoLink($this->linkText, $this->typolinkConfiguration);
 	}
 
 	/**
