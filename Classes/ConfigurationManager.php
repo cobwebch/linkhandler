@@ -130,7 +130,7 @@ class ConfigurationManager implements \TYPO3\CMS\Core\SingletonInterface {
 
 		if (TYPO3_MODE === 'FE') {
 			$this->configuration = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
-		} elseif ('TYPO3_MODE' === 'BE') {
+		} elseif (TYPO3_MODE === 'BE') {
 			$this->loadBackendConfiguration();
 		}
 	}
@@ -188,7 +188,7 @@ class ConfigurationManager implements \TYPO3\CMS\Core\SingletonInterface {
 			return;
 		}
 
-		$modTSconfig = $backendUserAuthentication->getTSConfig("mod.tx_linkhandler", BackendUtility::getPagesTSconfig($this->getCurrentPageUid()));
+		$modTSconfig = $backendUserAuthentication->getTSConfig('mod.tx_linkhandler', BackendUtility::getPagesTSconfig($this->getCurrentPageUid()));
 		if (is_array($modTSconfig['properties'])) {
 			$this->configuration = $modTSconfig['properties'];
 		}
