@@ -97,6 +97,13 @@ class LinkHandler implements SingletonInterface {
 	protected $recordUid;
 
 	/**
+	 * The TypoScript configuration for the current tab.
+	 *
+	 * @var array
+	 */
+	protected $tabConfiguration;
+
+	/**
 	 * @var \Aoe\Linkhandler\Browser\TabHandlerFactory
 	 */
 	protected $tabHandlerFactory;
@@ -160,11 +167,15 @@ class LinkHandler implements SingletonInterface {
 		$this->recordUid = $linkInfo['recordUid'];
 		$this->initRecord();
 
-		if (!is_array($this->typolinkConfiguration)) {
-			throw new \Exception(sprintf('No linkhandler configuration was found for %s within plugin.tx_linkhandler.', $this->configurationKey));
+		if (!is_array($this->tabConfiguration)) {
+			throw new \Exception(sprintf('No configuration was found for %s within plugin.tx_linkhandler.', $this->configurationKey));
 		}
 
-		if (!is_array($this->recordRow) && !$this->typolinkConfiguration['forceLink']) {
+		if (!is_array($this->typolinkConfiguration)) {
+			throw new \Exception(sprintf('No typolink. configuration was found for %s within plugin.tx_linkhandler.', $this->configurationKey));
+		}
+
+		if (!is_array($this->recordRow) && !$this->tabConfiguration['forceLink']) {
 			return $this->linkText;
 		}
 
@@ -192,10 +203,10 @@ class LinkHandler implements SingletonInterface {
 
 		if (is_array($this->configuration) && array_key_exists($this->configurationKey . '.', $this->configuration)) {
 
-			$currentConfiguration = $this->configuration[$this->configurationKey . '.'];
+			$this->tabConfiguration = $this->configuration[$this->configurationKey . '.'];
 
-			if (is_array($currentConfiguration) && array_key_exists('typolink.', $currentConfiguration)) {
-				$this->typolinkConfiguration = $currentConfiguration['typolink.'];
+			if (is_array($this->tabConfiguration) && array_key_exists('typolink.', $this->tabConfiguration)) {
+				$this->typolinkConfiguration = $this->tabConfiguration['typolink.'];
 			}
 		}
 
