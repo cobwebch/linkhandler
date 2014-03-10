@@ -128,7 +128,7 @@ class ConfigurationManager implements \TYPO3\CMS\Core\SingletonInterface {
 			$this->currentPageUid = (int)$currentPageUid;
 		}
 
-		if ('TYPO3_MODE' === 'FE') {
+		if (TYPO3_MODE === 'FE') {
 			$this->configuration = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
 		} elseif ('TYPO3_MODE' === 'BE') {
 			$this->loadBackendConfiguration();
