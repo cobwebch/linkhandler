@@ -1,0 +1,3 @@
+
+# cat=plugin.tx_linkhandler/tt_news/n10; type=int+; label=Single news PID: The UID of the page where single news records should be displayed.
+plugin.tx_linkhandler.tt_news.singlePid =

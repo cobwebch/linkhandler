@@ -1,0 +1,16 @@
+
+plugin.tx_linkhandler.tx_tt_news_news {
+
+	label = News
+	listTables = tt_news
+
+	// Do not force link generation when the tt_news records are hidden or deleted.
+	forceLink = 0
+
+	typolink {
+		parameter = {$plugin.tx_linkhandler.tt_news.singlePid}
+		additionalParams = &tx_ttnews[tt_news]={field:uid}
+		additionalParams.insertData = 1
+		useCacheHash = 1
+	}
+}

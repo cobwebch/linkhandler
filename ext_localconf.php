@@ -19,17 +19,18 @@ $signalSlotDispatcher->connect('TYPO3\\CMS\\Core\\Database\\SoftReferenceIndex',
 // This hook is needed until https://review.typo3.org/27680/ is merged to open the correct tab in the link browser.
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_parsehtml_proc.php']['modifyParams_LinksRte_PostProc'][] = 'Aoe\\Linkhandler\\RteParserHook';
 
+
 $linkhandlerExtConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['linkhandler']);
 
-if (is_array($linkhandlerExtConf) && $linkhandlerExtConf['includeTtNewsTsConfig']) {
-
-	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
-
-		RTE.default.tx_linkhandler {
-			tx_tt_news_news {
-				label = News
-				listTables = tt_news
-			}
-		}
-	');
+if (
+	is_array($linkhandlerExtConf)
+	&& $linkhandlerExtConf['includeDefaultTsConfig']
+) {
+	if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('tt_news')) {
+		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
+			<INCLUDE_TYPOSCRIPT: source="FILE: EXT:linkhandler/Configuration/TypoScript/tt_news/setup.txt">
+			mod.tx_linkhandler.tx_tt_news_news < plugin.tx_linkhandler.tx_tt_news_news
+			RTE.default.tx_linkhandler.tx_tt_news_news < plugin.tx_linkhandler.tx_tt_news_news
+		');
+	}
 }
