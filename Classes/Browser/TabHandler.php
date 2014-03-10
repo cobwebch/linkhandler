@@ -87,6 +87,7 @@ class TabHandler implements TabHandlerInterface {
 	static public function getLinkBrowserInfoArray($href, $tabsConfig) {
 
 		$info = array();
+		$tabHandlerFound = FALSE;
 
 		if (strtolower(substr($href, 0, 7)) == 'record:') {
 
@@ -95,24 +96,28 @@ class TabHandler implements TabHandlerInterface {
 
 			if (count($parts) === 4) {
 				$info['act'] = $parts[1];
+				$tabHandlerFound = TRUE;
 			} elseif (count($parts) === 3) {
 
 				// Backward compatiblity: try to work with 3 link parts (without the configuration key part)
 				$partOffset = 0;
 
-				// Check the linkhandler TSConfig and find out  which config is responsible for the current table:
+				// Check the linkhandler TSConfig and find out which config is responsible for the current table:
 				foreach ($tabsConfig as $key => $tabConfig) {
-					if ($parts[1] == $tabConfig['listTables']) {
+					if (GeneralUtility::inList($tabConfig['listTables'], $parts[1])) {
 						$info['act'] = $key;
+						$tabHandlerFound = TRUE;
+						break;
 					}
 				}
 			} else {
 				throw new \InvalidArgumentException('The href is suppsed to consist of 3 or 4 parts seperated by colon (:). The current number of parts was: ' . count($parts));
 			}
 
-			$info['recordTable'] = $parts[$partOffset + 1];
-			$info['recordUid'] = $parts[$partOffset + 2];
-			$info['prevent-act-override'] = TRUE;
+			if ($tabHandlerFound) {
+				$info['recordTable'] = $parts[$partOffset + 1];
+				$info['recordUid'] = $parts[$partOffset + 2];
+			}
 		}
 
 		return $info;
