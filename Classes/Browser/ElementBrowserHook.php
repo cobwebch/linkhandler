@@ -197,7 +197,7 @@ class ElementBrowserHook implements ElementBrowserHookInterface {
 			$menuDef[$key]['isActive'] = $this->pObj->act == $key;
 			$menuDef[$key]['label'] = $this->languageService->sL($tabConfig['label'], TRUE);
 			$menuDef[$key]['url'] = '#';
-			$menuDef[$key]['addParams'] = 'onclick="jumpToUrl(\'?act=' . $key . '\');return false;"';
+			$menuDef[$key]['addParams'] = 'onclick="jumpToUrl(' . GeneralUtility::quoteJSvalue($this->getThisScript() . 'act=' . $key) . ');return false;"';
 		}
 
 		return $menuDef;
@@ -228,5 +228,18 @@ class ElementBrowserHook implements ElementBrowserHookInterface {
 		$info = array_merge($info, $newInfo);
 
 		return $info;
+	}
+
+	/**
+	 * Returns the URL to the current script and a trailing ? or & so that
+	 * a new URL parameter can be appended.
+	 *
+	 * TODO: remove this when https://review.typo3.org/28337/ is merged.
+	 *
+	 * @return string
+	 * @see \TYPO3\CMS\Rtehtmlarea\BrowseLinks::getThisScript()
+	 */
+	public function getThisScript() {
+		return strpos($this->pObj->thisScript, '?') === FALSE ? $this->pObj->thisScript . '?' : $this->pObj->thisScript . '&';
 	}
 }
