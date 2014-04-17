@@ -33,4 +33,14 @@ if (
 			RTE.default.tx_linkhandler.tx_tt_news_news < plugin.tx_linkhandler.tx_tt_news_news
 		');
 	}
+
+	if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
+		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
+			<INCLUDE_TYPOSCRIPT: source="FILE: EXT:linkhandler/Configuration/TypoScript/news/setup.txt">
+			mod.tx_linkhandler.tx_news_news < plugin.tx_linkhandler.tx_news_news
+			RTE.default.tx_linkhandler.tx_news_news < plugin.tx_linkhandler.tx_news_news
+		');
+	}
 }
+
+unset($linkhandlerExtConf);
