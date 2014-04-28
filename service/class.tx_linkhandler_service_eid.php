@@ -22,14 +22,6 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-require_once PATH_tslib . 'class.tslib_pagegen.php';
-require_once PATH_tslib . 'class.tslib_fe.php';
-require_once PATH_t3lib . 'class.t3lib_page.php';
-require_once PATH_tslib . 'class.tslib_content.php';
-require_once PATH_t3lib . 'class.t3lib_userauth.php' ;
-require_once PATH_tslib . 'class.tslib_feuserauth.php';
-require_once PATH_t3lib . 'class.t3lib_tstemplate.php';
-require_once PATH_t3lib . 'class.t3lib_cs.php';
 require_once t3lib_extMgm::extPath('linkhandler') . 'class.tx_linkhandler_handler.php';
 
 /**
