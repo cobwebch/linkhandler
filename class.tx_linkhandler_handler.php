@@ -64,6 +64,20 @@ class tx_linkhandler_handler {
 
 			$this->localcObj = clone $pObj;
 			$this->localcObj->start($recordArray, '');
+
+			// Hook for changing the parameter
+			if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkhandler']['parameterChanger'])) {
+				foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkhandler']['parameterChanger'] as $classReference) {
+					$hookObject = t3lib_div::getUserObj($classReference);
+					$linkConfigArray[$recordTableName . '.']['parameter'] = $hookObject->parameterChanger(
+						$this,
+						$recordTableName,
+						$recordUid,
+						$linkConfigArray[$recordTableName . '.']['parameter']
+					);
+				}
+			}
+
 			$linkConfigArray[$recordTableName . '.']['parameter'] .= $furtherLinkParams;
 
 			$currentLinkConfigurationArray = $this->mergeTypoScript($linkConfigArray , $typoLinkConfiguration, $recordTableName);
