@@ -61,6 +61,21 @@ mod.tx_linkhandler.tx_myext_imagelinks {
 }
 ```
 
+### Page tree mount points
+
+You can configure mount points for the page tree that is displayed in the element browser.
+
+For example if you only want to diplay the pages where your news records are located
+(in this example PID 123 and 234) you can use the following Page TSConfig:
+
+```
+mod.tx_linkhandler.tx_news_news.pageTreeMountPoints {
+	1 = 123
+	2 = 234
+}
+RTE.default.tx_linkhandler.tx_news_news.pageTreeMountPoints < mod.tx_linkhandler.tx_news_news.pageTreeMountPoints
+```
+
 ### Additional goodies
 
 * When editing a link the correct tab will open automatically.

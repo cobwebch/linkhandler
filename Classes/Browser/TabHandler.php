@@ -158,6 +158,13 @@ class TabHandler implements TabHandlerInterface {
 		$pagetree->ext_showPageId = $beUser->getTSConfigVal('options.pageTree.showPageIdWithTitle');
 		$pagetree->addField('nav_title');
 
+		if (
+			isset($this->tabConfiguration['pageTreeMountPoints.'])
+			&& is_array($this->tabConfiguration['pageTreeMountPoints.'])
+			&& !empty($this->tabConfiguration['pageTreeMountPoints.'])) {
+			$pagetree->MOUNTS = $this->tabConfiguration['pageTreeMountPoints.'];
+		}
+
 		$pm = \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('PM');
 		if (isset($expandPage) && !isset($pm)) {
 			$pagetree->expandToPage($expandPage);
