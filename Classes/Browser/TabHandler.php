@@ -24,7 +24,7 @@ namespace Aoe\Linkhandler\Browser;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use \Aoe\Linkhandler\Browser\TabHandlerInterface;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -117,6 +117,7 @@ class TabHandler implements TabHandlerInterface {
 			if ($tabHandlerFound) {
 				$info['recordTable'] = $parts[$partOffset + 1];
 				$info['recordUid'] = $parts[$partOffset + 2];
+				$info['info'] = static::getLinkLabel($info);
 			}
 		}
 
@@ -214,5 +215,37 @@ class TabHandler implements TabHandlerInterface {
 		';
 
 		return $content;
+	}
+
+	/**
+	 * @return \TYPO3\CMS\Lang\LanguageService
+	 */
+	static protected function getLanguageService() {
+		return $GLOBALS['LANG'];
+	}
+
+	/**
+	 * Generates a label for the given link info based on the TCA.
+	 *
+	 * As fallback the table name and the record UID will be used.
+	 *
+	 * @param array $linkInfo
+	 * @return string
+	 */
+	static protected function getLinkLabel($linkInfo) {
+
+		$recordTable = $linkInfo['recordTable'];
+		$tableLabel = $recordTable;
+		if (isset($GLOBALS['TCA'][$recordTable]['ctrl']['title'])) {
+			$tableLabel = static::getLanguageService()->sL($GLOBALS['TCA'][$recordTable]['ctrl']['title']);
+		}
+
+		$recordLabel = $linkInfo['recordUid'];
+		$record = BackendUtility::getRecord($linkInfo['recordTable'], $linkInfo['recordUid']);
+		if (isset($record) && is_array($record)) {
+			$recordLabel = BackendUtility::getRecordTitle($linkInfo['recordTable'], $record);
+		}
+
+		return $tableLabel . ': ' . $recordLabel;
 	}
 }
