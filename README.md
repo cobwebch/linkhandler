@@ -81,6 +81,7 @@ RTE.default.tx_linkhandler.tx_news_news.pageTreeMountPoints < mod.tx_linkhandler
 * When editing a link the correct tab will open automatically.
 * The searchbox below the record list can be disabled by setting ```enableSearchBox = 0``` in the tab configuration in TSConfig.
 * SoftReference handling using signal slots, TYPO3 patch pending: https://review.typo3.org/27746/
+* The current link is displayed in a nice label consisting of the localized table label and the linked record title.
 
 ## Tips & Tricks
 
