@@ -16,9 +16,11 @@ $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TY
 $signalSlotDispatcher->connect('TYPO3\\CMS\\Core\\Database\\SoftReferenceIndex', 'getTypoLinkParts', 'Aoe\\Linkhandler\\SoftReferenceHandler', 'getTypoLinkParts', FALSE);
 $signalSlotDispatcher->connect('TYPO3\\CMS\\Core\\Database\\SoftReferenceIndex', 'setTypoLinkPartsElement', 'Aoe\\Linkhandler\\SoftReferenceHandler', 'setTypoLinkPartsElement', FALSE);
 
-// This hook is needed until https://review.typo3.org/27680/ is merged to open the correct tab in the link browser.
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_parsehtml_proc.php']['modifyParams_LinksRte_PostProc'][] = 'Aoe\\Linkhandler\\RteParserHook';
-
+// This hook is needed until https://review.typo3.org/27680/ is merged to
+// open the correct tab in the link browser.
+if (!\Aoe\Linkhandler\Utility\LegacyUtility::externalLinkFixIsImplemented()) {
+	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_parsehtml_proc.php']['modifyParams_LinksRte_PostProc'][] = 'Aoe\\Linkhandler\\RteParserHook';
+}
 
 $linkhandlerExtConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['linkhandler']);
 
