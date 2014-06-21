@@ -16,7 +16,6 @@ a version that is compatible with TYPO3 6.2.
 Unfortunately not all isses in TYPO3 are merged yet. These issues are still pending and need review / testing for this Extension to work correctly:
 
 * Treat linkhandler links as internal URLs: https://review.typo3.org/#/c/27680/
-* Pass on required GET parameters in the element browser: https://review.typo3.org/#/c/29536/
 * Required soft reference parser hooks: https://review.typo3.org/#/c/27746/
 
 There is a TYPO3 6.2 fork that already implements the required patches (and some more) at Github: https://github.com/Intera/TYPO3.CMS
