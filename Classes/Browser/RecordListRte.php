@@ -26,7 +26,6 @@ namespace Aoe\Linkhandler\Browser;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Utility\IconUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class TBE_browser_recordListRTE extends TBE_browser_recordList
@@ -91,7 +90,7 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 
 		$blinkArrow = '';
 		if ($this->browseLinksObj->curUrlInfo['recordTable'] == $table && $this->browseLinksObj->curUrlInfo['recordUid'] == $uid) {
-			$blinkArrow = '<img' . \TYPO3\CMS\Backend\Utility\IconUtility::skinImg($GLOBALS['BACK_PATH'], 'gfx/blinkarrow_right.gif', 'width="5" height="9"') . ' class="c-blinkArrowL" alt="" />';
+			$blinkArrow = '<img' . IconUtility::skinImg($GLOBALS['BACK_PATH'], 'gfx/blinkarrow_right.gif', 'width="5" height="9"') . ' class="c-blinkArrowL" alt="" />';
 		}
 
 		return $ATag . $code . $blinkArrow . $ATag_e;
