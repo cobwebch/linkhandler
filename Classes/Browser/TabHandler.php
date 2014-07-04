@@ -236,6 +236,13 @@ class TabHandler implements TabHandlerInterface {
 
 		$recordTable = $linkInfo['recordTable'];
 		$tableLabel = $recordTable;
+
+		// Since the language service is only available in the Backend and the record title
+		//  is not needed in the Frontend we return early if request is not in Backend mode.
+		if (TYPO3_MODE !== 'BE') {
+			return $tableLabel;
+		}
+
 		if (isset($GLOBALS['TCA'][$recordTable]['ctrl']['title'])) {
 			$tableLabel = static::getLanguageService()->sL($GLOBALS['TCA'][$recordTable]['ctrl']['title']);
 		}
