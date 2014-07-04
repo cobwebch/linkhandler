@@ -129,7 +129,13 @@ class ConfigurationManager implements \TYPO3\CMS\Core\SingletonInterface {
 		}
 
 		if (TYPO3_MODE === 'FE') {
-			$this->configuration = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
+			$this->configuration = array();
+			if (
+				isset($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'])
+				&& is_array($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'])
+			) {
+				$this->configuration = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
+			}
 		} elseif (TYPO3_MODE === 'BE') {
 			$this->loadBackendConfiguration();
 		}
