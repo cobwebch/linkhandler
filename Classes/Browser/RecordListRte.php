@@ -79,10 +79,10 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 
 		if (@$this->browseLinksObj->mode == 'rte') {
 			// Used in RTE mode:
-			$aOnClick = 'return link_spec(\'' . $recordLink . '\');"';
+			$aOnClick = 'return link_spec(\'' . $recordLink . '\');';
 		} else {
 			// Used in wizard mode
-			$aOnClick = 'return link_folder(\'' . $recordLink . '\');"';
+			$aOnClick = 'return link_folder(\'' . $recordLink . '\');';
 		}
 
 		$ATag = '<a href="#" onclick="' . $aOnClick . '">';
