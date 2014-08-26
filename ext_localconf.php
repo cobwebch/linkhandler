@@ -45,4 +45,6 @@ if (
 	}
 }
 
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkvalidator']['checkLinks']['tx_linkhandler'] = 'Aoe\\Linkhandler\\Linkvalidator\\LinkhandlerLinkType';
+
 unset($linkhandlerExtConf);

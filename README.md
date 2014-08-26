@@ -75,6 +75,32 @@ mod.tx_linkhandler.tx_news_news.pageTreeMountPoints {
 RTE.default.tx_linkhandler.tx_news_news.pageTreeMountPoints < mod.tx_linkhandler.tx_news_news.pageTreeMountPoints
 ```
 
+### Linkvalidator support
+
+This linkhandler version comes with its own linkvalidator link type that supports the new link format with four parameters
+and provides some additional features that are not merged yet to the core.
+
+To use it you have to adjust your linkvalidator TSConfig:
+
+```
+mod.linkvalidator {
+	linktypes = db,external,tx_linkhandler
+}
+```
+
+Please not that you need to use ```tx_linkhandler``` instead of ```linkhandler``` which is the default link type that comes with the core.
+
+This link type comes with an additional configuration option that allows the reporting of links that point to  hidden records:
+
+```
+mod.linkvalidator {
+	tx_linkhandler.reportHiddenRecords = 1
+}
+```
+
+For this additional option to work this pending TYPO3 patch is required: https://review.typo3.org/#/c/26499/ (Provide TSConfig to link checkers).
+There is a TYPO3 6.2 fork that already implements the required patches (and some more) at Github: https://github.com/Intera/TYPO3.CMS
+
 ### Additional goodies
 
 * When editing a link the correct tab will open automatically.
