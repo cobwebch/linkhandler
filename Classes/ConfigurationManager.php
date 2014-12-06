@@ -164,6 +164,40 @@ class ConfigurationManager implements \TYPO3\CMS\Core\SingletonInterface {
 	}
 
 	/**
+	 * Gets the current page ID from the first site root in tree.
+	 *
+	 * @return int the page UID, will be 0 if none has been set
+	 * @see \TYPO3\CMS\Extbase\Configuration\BackendConfigurationManager::getCurrentPageIdFromCurrentSiteRoot()
+	 */
+	protected function getCurrentPageIdFromCurrentSiteRoot() {
+		$rootPage = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
+			'uid', 'pages', 'deleted=0 AND hidden=0 AND is_siteroot=1', '', 'sorting'
+		);
+		if (empty($rootPage)) {
+			return 0;
+		}
+
+		return (int)$rootPage['uid'];
+	}
+
+	/**
+	 * Gets the current page ID from the first created root template.
+	 *
+	 * @return int the page UID, will be 0 if none has been set
+	 * @see \TYPO3\CMS\Extbase\Configuration\BackendConfigurationManager::getCurrentPageIdFromRootTemplate()
+	 */
+	protected function getCurrentPageIdFromRootTemplate() {
+		$rootTemplate = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
+			'pid', 'sys_template', 'deleted=0 AND hidden=0 AND root=1', '', 'crdate'
+		);
+		if (empty($rootTemplate)) {
+			return 0;
+		}
+
+		return (int)$rootTemplate['pid'];
+	}
+
+	/**
 	 * Tries to determine the current page UID and returns it.
 	 *
 	 * @return int
@@ -180,7 +214,19 @@ class ConfigurationManager implements \TYPO3\CMS\Core\SingletonInterface {
 			return $this->currentPageUid;
 		}
 
-		return 0;
+		$pageUid = $this->getCurrentPageIdFromCurrentSiteRoot();
+		if ($pageUid > 0) {
+			return $pageUid;
+		}
+
+		return $this->getCurrentPageIdFromRootTemplate();
+	}
+
+	/**
+	 * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+	 */
+	protected function getDatabaseConnection() {
+		return $GLOBALS['TYPO3_DB'];
 	}
 
 	/**
