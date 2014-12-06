@@ -206,7 +206,7 @@ class ConfigurationManager implements \TYPO3\CMS\Core\SingletonInterface {
 	protected function loadTabsConfiguration() {
 
 		if (is_array($this->tabsConfiguration)) {
-			return $this->tabsConfiguration;
+			return;
 		}
 
 		$this->tabsConfiguration = array();
