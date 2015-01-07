@@ -183,6 +183,18 @@ class LinkHandler implements SingletonInterface {
 		$furtherLinkParams = str_replace($this->linkHandlerKey, '', $this->linkParameters);
 		$this->typolinkConfiguration['parameter'] .= $furtherLinkParams;
 
+		$hookParams = array(
+			'typolinkConfiguration' => &$this->typolinkConfiguration,
+			'linkText' => &$this->linkText,
+			'recordRow' => &$this->recordRow
+		);
+
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkhandler']['generateLink'])) {
+			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkhandler']['generateLink'] as $funcRef) {
+				\TYPO3\CMS\Core\Utility\GeneralUtility::callUserFunction($funcRef, $hookParams, $this);
+			}
+		}
+
 		// Build the full link to the record
 		$this->localContentObjectRenderer->start($this->recordRow, '');
 		return $this->localContentObjectRenderer->typoLink($this->linkText, $this->typolinkConfiguration);
