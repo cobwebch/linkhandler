@@ -26,6 +26,7 @@ namespace Aoe\Linkhandler\Browser;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Utility\IconUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class TBE_browser_recordListRTE extends TBE_browser_recordList
@@ -54,6 +55,20 @@ class RecordListRte extends \TYPO3\CMS\Backend\RecordList\ElementBrowserRecordLi
 	 * @var bool
 	 */
 	protected $enableSearchBox = TRUE;
+
+	/**
+	 * Returns additional, local GET parameters to include in the links of the record list.
+	 *
+	 * @return string
+	 */
+	public function ext_addP() {
+		$additionalGetParameters = '';
+		$pageUidParameter = GeneralUtility::_GP('P');
+		if ($pageUidParameter) {
+			$additionalGetParameters = '&' . http_build_query(array('P' => $pageUidParameter));
+		}
+		return $additionalGetParameters . parent::ext_addP();
+	}
 
 	/**
 	 * Returns the title (based on $code) of a record (from table $table) with the proper link around (that is for "pages"-records a link to the level of that record...)
