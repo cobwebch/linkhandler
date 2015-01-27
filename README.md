@@ -92,6 +92,47 @@ mod.linkvalidator {
 For this additional option to work this pending TYPO3 patch is required: https://review.typo3.org/#/c/26499/ (Provide TSConfig to link checkers).
 There is a TYPO3 6.2 fork that already implements the required patches (and some more) at Github: https://github.com/Intera/TYPO3.CMS
 
+### Pass on parent typolink configuration
+
+*This feature is experimental and might change in the future!* Testing and suggestions welcome :)
+
+A config option called ```overrideParentTypolinkConfiguration``` is available. When this option is enabled for a tab configuration,
+the original configuration passed to the ```typolink()``` method will be used as the basis for the final typolink configuration that
+is used in linkhandler. Here is an example:
+
+Imagine you have a typolink like this:
+
+```
+lib.myobj = TEXT
+lib.myobj {
+	value = Hello World
+	typolink.parameter = record:tx_news_news:tx_news_domain_model_news:1
+	typolink.no_cache = 1
+}
+```
+
+When you now configure for example the news records like this, the ```no_cache``` option from the ```lib.myobj.typolink``` block
+will be passed on to the typolink call used by linkhandler:
+
+```
+plugin.tx_linkhandler.tx_news_news {
+	overrideParentTypolinkConfiguration = 1
+}
+```
+
+You can still override this behavior in the linkhandler configuration though because the ```typolink`` block is merged into
+the parent configuration:
+
+```
+plugin.tx_linkhandler.tx_news_news {
+	overrideParentTypolinkConfiguration = 1
+	typolink.no_cache = 0
+}
+```
+
+The only value that is **always** overwritten is the ```parameter``` configuration.
+
+
 ### Additional goodies
 
 * When editing a link the correct tab will open automatically.

@@ -112,11 +112,25 @@ class UriBuilderText extends \TYPO3\CMS\Core\Tests\FunctionalTestCase {
 		$this->typoScriptFrontendController->tmpl->setup['plugin.']['tx_linkhandler.']['tx_news_news.']['typolink.']['useCacheHash'] = 0;
 
 		$this->uriBuilder->reset()
-			->setTargetPageUid('record:tx_news_news:tx_news_domain_model_news:1')
-			->setUseCacheHash(FALSE)
-			->setNoCache(FALSE);
+			->setTargetPageUid('record:tx_news_news:tx_news_domain_model_news:1');
 
 		$generatedUrl = $this->uriBuilder->buildFrontendUri();
 		$this->assertEquals('index.php?id=1&tx_news_pi1%5Bnews%5D=1&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail', $generatedUrl);
+	}
+
+	/**
+	 * @test
+	 */
+	public function frontendUriBuilderParametersArePassedOnIfConfigured() {
+
+		$this->typoScriptFrontendController->tmpl->setup['plugin.']['tx_linkhandler.']['tx_news_news.']['overrideParentTypolinkConfiguration'] = 1;
+		$this->typoScriptFrontendController->tmpl->setup['plugin.']['tx_linkhandler.']['tx_news_news.']['typolink.']['useCacheHash'] = 0;
+
+		$this->uriBuilder->reset()
+			->setTargetPageUid('record:tx_news_news:tx_news_domain_model_news:1')
+			->setNoCache(TRUE);
+
+		$generatedUrl = $this->uriBuilder->buildFrontendUri();
+		$this->assertEquals('index.php?id=1&no_cache=1&tx_news_pi1%5Bnews%5D=1&tx_news_pi1%5Bcontroller%5D=News&tx_news_pi1%5Baction%5D=detail', $generatedUrl);
 	}
 }

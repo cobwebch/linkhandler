@@ -82,6 +82,13 @@ class LinkHandler implements SingletonInterface {
 	protected $typolinkConfiguration;
 
 	/**
+	 * The configuration that was passed to the parent typolink call.
+	 *
+	 * @var array
+	 */
+	protected $typolinkConfigurationParent;
+
+	/**
 	 * @var array
 	 */
 	protected $recordRow;
@@ -138,6 +145,7 @@ class LinkHandler implements SingletonInterface {
 		$this->linkHandlerKey = $linkHandlerKeyword . ':' . $linkHandlerValue;
 		$this->contentObjectRenderer = $contentObjectRenderer;
 		$this->configuration = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_linkhandler.'];
+		$this->typolinkConfigurationParent = (array)$conf;
 
 		try {
 			$generatedLink = $this->generateLink();
@@ -177,6 +185,15 @@ class LinkHandler implements SingletonInterface {
 
 		if (!is_array($this->recordRow) && !$this->tabConfiguration['forceLink']) {
 			return $this->linkText;
+		}
+
+		if (
+			isset($this->tabConfiguration['overrideParentTypolinkConfiguration'])
+			&& $this->tabConfiguration['overrideParentTypolinkConfiguration']
+		) {
+			$newTypoLinkConfiguration = $this->typolinkConfigurationParent;
+			\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($newTypoLinkConfiguration, $this->typolinkConfiguration);
+			$this->typolinkConfiguration = $newTypoLinkConfiguration;
 		}
 
 		// Extract link params like "target", "css-class" or "title"
