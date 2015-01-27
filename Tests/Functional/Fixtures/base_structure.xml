@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+	<pages>
+		<uid>1</uid>
+		<pid>0</pid>
+		<deleted>0</deleted>
+		<is_siteroot>1</is_siteroot>
+		<title>Testpage Root</title>
+		<TSconfig><![CDATA[
+			<INCLUDE_TYPOSCRIPT: source="FILE: EXT:linkhandler/Configuration/TypoScript/news/setup.txt">
+			mod.tx_linkhandler.tx_news_news < plugin.tx_linkhandler.tx_news_news
+			RTE.default.tx_linkhandler.tx_news_news < plugin.tx_linkhandler.tx_news_news
+		]]></TSconfig>
+	</pages>
+	<sys_template>
+		<uid>1</uid>
+		<pid>1</pid>
+		<root>1</root>
+		<title>Testtemplate</title>
+		<include_static_file>EXT:linkhandler/Configuration/TypoScript/news/</include_static_file>
+		<constants>plugin.tx_linkhandler.news.singlePid = 1</constants>
+		<config>
+			page = PAGE
+			page.typenum = 0
+		</config>
+	</sys_template>
+</dataset>

@@ -197,7 +197,14 @@ class LinkHandler implements SingletonInterface {
 
 		// Build the full link to the record
 		$this->localContentObjectRenderer->start($this->recordRow, '');
-		return $this->localContentObjectRenderer->typoLink($this->linkText, $this->typolinkConfiguration);
+		$link = $this->localContentObjectRenderer->typoLink($this->linkText, $this->typolinkConfiguration);
+
+		// Make the typolink data available in the parent content object.
+		$this->contentObjectRenderer->lastTypoLinkLD = $this->localContentObjectRenderer->lastTypoLinkLD;
+		$this->contentObjectRenderer->lastTypoLinkUrl = $this->localContentObjectRenderer->lastTypoLinkUrl;
+		$this->contentObjectRenderer->lastTypoLinkTarget = $this->localContentObjectRenderer->lastTypoLinkTarget;
+
+		return $link;
 	}
 
 	/**
