@@ -214,6 +214,7 @@ class LinkHandler implements SingletonInterface {
 
 		// Build the full link to the record
 		$this->localContentObjectRenderer->start($this->recordRow, '');
+		$this->localContentObjectRenderer->parameters = $this->contentObjectRenderer->parameters;
 		$link = $this->localContentObjectRenderer->typoLink($this->linkText, $this->typolinkConfiguration);
 
 		// Make the typolink data available in the parent content object.
