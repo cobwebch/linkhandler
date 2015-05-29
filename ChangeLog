@@ -1,3 +1,7 @@
+2013-06-11 Alexander Stehlik <astehlik@intera.de>
+	* Fully refactored version, compatible with TYPO3 6.2
+	* Warning! Some new features like softrefs and "Save and show" are still missing
+
 2013-04-23 Bernhard Kraft  <kraft@webconsulting.at>
 	* Fixed bug #47505: double ampersands in link-browse popup
 
@@ -33,7 +37,7 @@
 	* Fixed furhter link params in linkhandler link processing
 
 25-09-2009 Michael Klapper <michael.klapper@aoemedia.de>
-	* Fixed Bug #4479: allow recursive onlyPids - Thanks to Stefano Cecere for providing the patch. 
+	* Fixed Bug #4479: allow recursive onlyPids - Thanks to Stefano Cecere for providing the patch.
 
 11-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Minnor code changes
@@ -44,10 +48,10 @@
 	* Minnor code changes
 
 09-08-2009 Daniel Pötzinger
-	* New configurations for recordTab: 
+	* New configurations for recordTab:
 		noAttributesForm=1
 		linkClassName=footnote
-	
+
 07-08-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Fix bug #3784: Tabs in Linkview are jumping
 	* Add feature #4183: Add parameter overwriteHandler to the tab configuration
@@ -62,7 +66,7 @@
 	* Refactor the tx_linkhandler_handler
 
 16-07-2009 Michael Klapper <michael.klapper@aoemedia.de>
-	* Minnor code changes 
+	* Minnor code changes
 	* Add support for WS preview link generation
 	* Add support to view records from different language
 	* Increase version number
@@ -97,7 +101,6 @@
 
 21-04-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* fix Bug #3143
-
 17-04-2009 Michael Klapper <michael.klapper@aoemedia.de>
 	* Update Documentation
 

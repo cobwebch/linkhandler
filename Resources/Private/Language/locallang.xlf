@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2012-08-31T17:54:12Z" product-name="linkhandler">
+		<header/>
+		<body>
+			<trans-unit id="list.report.rowdeleted.default.title" xml:space="preserve">
+				<source>Linked</source>
+			</trans-unit>
+			<trans-unit id="list.report.rownotvisible" xml:space="preserve">
+				<source>Error</source>
+			</trans-unit>
+			<trans-unit id="list.report.rownotvisible" xml:space="preserve">
+				<source>###title### row (###uid###) is not visible.</source>
+			</trans-unit>
+			<trans-unit id="list.report.rowdeleted" xml:space="preserve">
+				<source>###title### row (###uid###) is deleted.</source>
+			</trans-unit>
+			<trans-unit id="list.report.rownotexisting" xml:space="preserve">
+				<source>Row (###uid###) does not exist.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

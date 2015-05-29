@@ -1,46 +1,166 @@
-Extension linkhandler
-=====================
+# Linkhandler
 
-Friendly fork of TYPO3 extension "linkhandler" with support for TYPO3 CMS 6+.
+This is a fork of the linkhandler TYPO3 extension.
 
-This version is just meant to share the changes I did to linkhandler to
-make it work with TYPO3 6.0 to 6.2 until the official version is updated.
+## About this fork
 
-Note that this version is strictly for TYPO3 6.0 or more and is not compatible
-with lower versions (I didn't bother with adding a compatibility layer).
+This is an experimental version of the linkhandler extension that aims
+to minimize the amount of duplicate code.
 
-The official project is located at http://forge.typo3.org/projects/extension-linkhandler
+Additionally, all legacy code was removed, the goal is to provide
+a version that is compatible with TYPO3 6.2.
 
-The extension manual can be found here: http://docs.typo3.org/typo3cms/extensions/linkhandler/0.3.1/
+## Additional features
 
-Local changes
-^^^^^^^^^^^^^
+This Extension offers some additional features compared to the original version.
 
-A hook was added to make it possible to change the "parameter" property
-of the typolink on the fly.
+### Multiple configurations for the same table
 
-Declare it with something like::
+It is now possible to create links to the same table within different configurations. E.g. you could link
+to different content types to different target pages.
 
-	$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkhandler']['parameterChanger'][] = 'Foo\\Bar\\Hook\\Linkhandler';
+For this to work the links now consists of four parts instead of three. The old link block looked like this:
 
-inside your extension's `ext_localconf.php` file. The corresponding class must
-have a `parameterChanger` method::
+```
+record:<table_name>:<uid>
+```
 
-	class Linkhandler {
-		/**
-		 * Changes target page based on ...
-		 *
-		 * @param \tx_linkhandler_handler $pObj Back-reference to calling object
-		 * @param string $recordTableName Name of the table being linked to
-		 * @param integer $recordUid Id of the record being linked to
-		 * @param integer $currentParameter Id of current target page
-		 * @return mixed
-		 */
-		public function parameterChanger($pObj, $recordTableName, $recordUid, $currentParameter) {
-			...
-			return $foo;
+The new link block looks like this:
+
+```
+record:<config_key>:<table_name>:<uid>
+```
+
+This feature is backward compatible. If an old link is detected that consists only of three parts the first
+configuration found for the linked table will be used.
+
+### Record filtering
+
+The records that are displayed in the list can be filtered by SQL queries. You can define a search query
+for each table configured in ```listTables```. This is an example configuration for using the
+```additionalSearchQueries``` option in the TSConfig:
+
+```
+mod.tx_linkhandler.tx_myext_imagelinks {
+	label = Image link
+	listTables = tt_content
+	additionalSearchQueries {
+		tt_content = AND tt_content.CType='image'
+	}
+}
+```
+
+### Page tree mount points
+
+You can configure mount points for the page tree that is displayed in the element browser.
+
+For example if you only want to diplay the pages where your news records are located
+(in this example PID 123 and 234) you can use the following Page TSConfig:
+
+```
+mod.tx_linkhandler.tx_news_news.pageTreeMountPoints {
+	1 = 123
+	2 = 234
+}
+RTE.default.tx_linkhandler.tx_news_news.pageTreeMountPoints < mod.tx_linkhandler.tx_news_news.pageTreeMountPoints
+```
+
+### Linkvalidator support
+
+This linkhandler version comes with its own linkvalidator link type that supports the new link format with four parameters
+and provides some additional features that are not merged yet to the core.
+
+To use it you have to adjust your linkvalidator TSConfig:
+
+```
+mod.linkvalidator {
+	linktypes = db,external,tx_linkhandler
+}
+```
+
+Please not that you need to use ```tx_linkhandler``` instead of ```linkhandler``` which is the default link type that comes with the core.
+
+This link type comes with an additional configuration option that allows the reporting of links that point to  hidden records:
+
+```
+mod.linkvalidator {
+	tx_linkhandler.reportHiddenRecords = 1
+}
+```
+
+For this additional option to work this pending TYPO3 patch is required: https://review.typo3.org/#/c/26499/ (Provide TSConfig to link checkers).
+There is a TYPO3 6.2 fork that already implements the required patches (and some more) at Github: https://github.com/Intera/TYPO3.CMS
+
+### Pass on parent typolink configuration
+
+*This feature is experimental and might change in the future!* Testing and suggestions welcome :)
+
+A config option called ```overrideParentTypolinkConfiguration``` is available. When this option is enabled for a tab configuration,
+the original configuration passed to the ```typolink()``` method will be used as the basis for the final typolink configuration that
+is used in linkhandler. Here is an example:
+
+Imagine you have a typolink like this:
+
+```
+lib.myobj = TEXT
+lib.myobj {
+	value = Hello World
+	typolink.parameter = record:tx_news_news:tx_news_domain_model_news:1
+	typolink.no_cache = 1
+}
+```
+
+When you now configure for example the news records like this, the ```no_cache``` option from the ```lib.myobj.typolink``` block
+will be passed on to the typolink call used by linkhandler:
+
+```
+plugin.tx_linkhandler.tx_news_news {
+	overrideParentTypolinkConfiguration = 1
+}
+```
+
+You can still override this behavior in the linkhandler configuration though because the ```typolink`` block is merged into
+the parent configuration:
+
+```
+plugin.tx_linkhandler.tx_news_news {
+	overrideParentTypolinkConfiguration = 1
+	typolink.no_cache = 0
+}
+```
+
+The only value that is **always** overwritten is the ```parameter``` configuration.
+
+
+### Additional goodies
+
+* When editing a link the correct tab will open automatically.
+* The searchbox below the record list can be disabled by setting ```enableSearchBox = 0``` in the tab configuration in TSConfig.
+* SoftReference handling using signal slots, TYPO3 patch pending: https://review.typo3.org/27746/
+* The current link is displayed in a nice label consisting of the localized table label and the linked record title.
+
+## Tips & Tricks
+
+### Link browser width
+
+You can use TSConfig to increase the with of the link browser windows in the Backend to prevent problem with the styles:
+
+```
+RTE {
+	default {
+		buttons {
+			link {
+				dialogueWindow {
+					width = 600
+				}
+			}
 		}
 	}
+}
+```
 
-The method is expected to return the parameter property, whether modified
-or not.
+## Missing Feature
+
+The last missing feature in this version is the handling of the "Save and show" button.
+
+>>>>>>> intera6-2

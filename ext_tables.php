@@ -1,29 +1,14 @@
 <?php
-if (!defined ('TYPO3_MODE'))
+if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
-
-t3lib_extMgm::addStaticFile($_EXTKEY,'static/link_handler/', 'link handler');
-
-	// hide the button saveDocView for tt_news categories
-t3lib_extMgm::addUserTSconfig('
-	options.saveDocView.tt_news = 1
-');
-
-t3lib_extMgm::addPageTSConfig('
-RTE.default.tx_linkhandler {
-	tt_news {
-		label=News
-		listTables=tt_news
-	}
 }
 
-mod.tx_linkhandler {
-	tt_news {
-		label=News
-		listTables=tt_news
-		previewPageId = 1
-	}
+if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('tt_news')) {
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript/tt_news', 'Link handler - tt_news');
 }
-');
 
-?>
+if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript/news', 'Link handler - news');
+}
+
+$GLOBALS['TBE_STYLES']['skins']['t3skin']['stylesheetDirectories']['tx_linkhandler_styles'] = 'EXT:linkhandler/Resources/Public/BackendStyles/';

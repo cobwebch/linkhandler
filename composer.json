@@ -1,0 +1,11 @@
+{
+	"name": "intera-typo3-extension/linkhandler",
+	"description": "Enables userfriendly links to records like tt_news etc... Configure new Tabs to the link-wizard. (by AOE media GmbH)",
+	"type": "typo3-cms-extension",
+	"version": "2.0.0",
+	"autoload": {
+		"psr-4": {
+			"Aoe\\Linkhandler\\": "Classes/"
+		}
+	}
+}
