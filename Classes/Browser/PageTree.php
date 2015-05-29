@@ -24,11 +24,13 @@ namespace Aoe\Linkhandler\Browser;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Recordlist\Tree\View\ElementBrowserPageTreeView;
+
 /**
  * Extends the default page tree with the possibility to set an active
  * rootline.
  */
-class PageTree extends \TBE_PageTree {
+class PageTree extends ElementBrowserPageTreeView {
 
 	/**
 	 * Expands all mount points in the tree to the given PID
