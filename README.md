@@ -4,11 +4,13 @@ This is a fork of the linkhandler TYPO3 extension.
 
 ## About this fork
 
-This is an experimental version of the linkhandler extension that aims
-to minimize the amount of duplicate code.
+This is an officious version of extension linkhandler. It is the result of my own
+cleanups and of other forks, merged into this one.
 
-Additionally, all legacy code was removed, the goal is to provide
-a version that is compatible with TYPO3 6.2.
+The master version was duly tested with TYPO3 CMS 7.2. It seems to work fine with
+up to 7.4, but is not fully tested.
+
+For a version compatible with TYPO3 CMS 6.2, please use the TYPO3_6-2 branch.
 
 ## Additional features
 
