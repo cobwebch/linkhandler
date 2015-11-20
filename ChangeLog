@@ -1,3 +1,7 @@
+2015-11-20 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Refactored for new LinkHandler API, requires TYPO3 7 LTS
+
 2013-06-11 Alexander Stehlik <astehlik@intera.de>
 	* Fully refactored version, compatible with TYPO3 6.2
 	* Warning! Some new features like softrefs and "Save and show" are still missing

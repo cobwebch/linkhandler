@@ -11,11 +11,11 @@
 ########################################################################
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'AOE link handler',
-	'description' => 'Enables userfriendly links to records like tt_news etc... Configure new Tabs to the link-wizard. (by AOE media GmbH)',
+	'title' => 'Generic record link handler',
+	'description' => 'Create links to any record (e.g. news)',
 	'category' => 'plugin',
 	'shy' => 0,
-	'version' => '2.1.0',
+	'version' => '3.0.0',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
@@ -27,14 +27,14 @@ $EM_CONF[$_EXTKEY] = array(
 	'modify_tables' => '',
 	'clearcacheonload' => 0,
 	'lockType' => '',
-	'author' => 'Daniel Poetzinger, Michael Klapper',
-	'author_email' => 'mylastname@aoemedia.de',
-	'author_company' => 'AOE media GmbH',
+	'author' => 'Francois Suter',
+	'author_email' => 'typo3@cobweb.ch',
+	'author_company' => 'Cobweb Development Sarl',
 	'CGLcompliance' => '',
 	'CGLcompliance_note' => '',
 	'constraints' => array(
 		'depends' => array(
-			'typo3' => '7.2.0-7.3.99',
+			'typo3' => '7.6.1-7.9.99',
 		),
 		'conflicts' => array(
 			'ch_rterecords',
