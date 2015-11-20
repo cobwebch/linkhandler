@@ -235,6 +235,8 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
     }
 
     /**
+     * Returns all parameters needed to build a URL with all the necessary information.
+     *
      * @param array $values Array of values to include into the parameters or which might influence the parameters
      *
      * @return string[] Array of parameters which have to be added to URLs
@@ -245,7 +247,11 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
         $parameters = [
             'expandPage' => $pid
         ];
-        return array_merge($this->linkBrowser->getUrlParameters($values), $parameters);
+        return array_merge(
+                $this->linkBrowser->getUrlParameters($values),
+                ['P' => $this->linkBrowser->getParameters()],
+                $parameters
+        );
     }
 
     /**
