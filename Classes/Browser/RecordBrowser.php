@@ -32,7 +32,6 @@ class RecordBrowser extends DatabaseBrowser
     {
         $this->determineScriptUrl();
         $this->initVariables();
-        $this->pageRenderer->loadRequireJsModule('Cobweb/Linkhandler/RecordLinkHandler');
     }
 
     /**

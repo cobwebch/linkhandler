@@ -11,7 +11,7 @@
  * The TYPO3 project - inspiring people to share!
  */
 
-define('Cobweb/Linkhandler/RecordLinkHandler', ['jquery', 'TYPO3/CMS/Recordlist/LinkBrowser'], function($, LinkBrowser) {
+define('TYPO3/CMS/Linkhandler/RecordLinkHandler', ['jquery', 'TYPO3/CMS/Recordlist/LinkBrowser'], function($, LinkBrowser) {
     'use strict';
 
     /**
