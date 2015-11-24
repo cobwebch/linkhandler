@@ -3,6 +3,9 @@
 	<file source-language="en" datatype="plaintext" original="messages" date="2012-08-31T17:54:12Z" product-name="linkhandler">
 		<header/>
 		<body>
+			<trans-unit id="tab.news" xml:space="preserve">
+				<source>News</source>
+			</trans-unit>
 			<trans-unit id="list.report.rowdeleted.default.title" xml:space="preserve">
 				<source>Linked</source>
 			</trans-unit>

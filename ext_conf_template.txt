@@ -1,3 +1,0 @@
-
-# cat=basic/settings/1; type=boolean; label=Include default TSConfig: If TRUE default Page TSConfig will be included for these Extensions if they are loaded: tt_news, news
-includeDefaultTsConfig =

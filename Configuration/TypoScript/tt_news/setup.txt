@@ -1,5 +1,5 @@
 
-plugin.tx_linkhandler.tx_tt_news_news {
+plugin.tx_linkhandler.tx_ttnews {
 
 	// Do not force link generation when the tt_news records are hidden or deleted.
 	forceLink = 0
