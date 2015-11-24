@@ -1,10 +1,7 @@
 
-plugin.tx_linkhandler.tx_news_news {
+plugin.tx_linkhandler.tx_news {
 
-	label = News
-	listTables = tx_news_domain_model_news
-
-	// Do not force link generation when the tt_news records are hidden or deleted.
+	// Do not force link generation when the news records are hidden or deleted.
 	forceLink = 0
 
 	typolink {

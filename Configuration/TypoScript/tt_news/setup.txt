@@ -1,9 +1,6 @@
 
 plugin.tx_linkhandler.tx_tt_news_news {
 
-	label = News
-	listTables = tt_news
-
 	// Do not force link generation when the tt_news records are hidden or deleted.
 	forceLink = 0
 
