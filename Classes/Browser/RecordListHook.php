@@ -22,30 +22,33 @@ use TYPO3\CMS\Backend\RecordList\RecordListGetTableHookInterface;
  * @author Francois Suter <typo3@cobweb.ch>
  * @package Aoe\Linkhandler\Browser
  */
-class RecordListHook implements RecordListGetTableHookInterface {
-	/**
-	 * Modified the List database query to avoid displaying translations when called
-	 * for the linkhandler element browser.
-	 *
-	 * @param string $table The current database table
-	 * @param int $pageId The record's page ID
-	 * @param string $additionalWhereClause An additional WHERE clause
-	 * @param string $selectedFieldsList Comma separated list of selected fields
-	 * @param \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList $parentObject Parent \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList object
-	 * @return void
-	 */
-	public function getDBlistQuery($table, $pageId, &$additionalWhereClause, &$selectedFieldsList, &$parentObject) {
-		$parentClass = get_class($parentObject);
-		// Act only if the calling object is our own element browser
-		if ($parentClass === 'Aoe\Linkhandler\Browser\RecordListRte') {
-			// If the table uses localization in same table, add condition to display on records in default language.
-			// We don't want the user to be able to point to translations, as these would create wrong links.
-			if ($GLOBALS['TCA'][$table]['ctrl']['languageField']
-				&& $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']
-				&& !$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerTable']) {
-				$additionalWhereClause .= ' AND ' . $table . '.' . $GLOBALS['TCA'][$table]['ctrl']['languageField'] . ' = 0 ';
-			}
-		}
-	}
+class RecordListHook implements RecordListGetTableHookInterface
+{
+    /**
+     * Modified the List database query to avoid displaying translations when called
+     * for the linkhandler element browser.
+     *
+     * @param string $table The current database table
+     * @param int $pageId The record's page ID
+     * @param string $additionalWhereClause An additional WHERE clause
+     * @param string $selectedFieldsList Comma separated list of selected fields
+     * @param \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList $parentObject Parent \TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList object
+     * @return void
+     */
+    public function getDBlistQuery($table, $pageId, &$additionalWhereClause, &$selectedFieldsList, &$parentObject)
+    {
+        $parentClass = get_class($parentObject);
+        // Act only if the calling object is our own element browser
+        if ($parentClass === 'Aoe\Linkhandler\Browser\RecordListRte') {
+            // If the table uses localization in same table, add condition to display on records in default language.
+            // We don't want the user to be able to point to translations, as these would create wrong links.
+            if ($GLOBALS['TCA'][$table]['ctrl']['languageField']
+                    && $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField']
+                    && !$GLOBALS['TCA'][$table]['ctrl']['transOrigPointerTable']
+            ) {
+                $additionalWhereClause .= ' AND ' . $table . '.' . $GLOBALS['TCA'][$table]['ctrl']['languageField'] . ' = 0 ';
+            }
+        }
+    }
 
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2012-08-31T17:54:12Z" product-name="linkhandler">
+	<file source-language="en" datatype="plaintext" original="messages" date="2012-08-31T17:54:12Z"
+		  product-name="linkhandler">
 		<header/>
 		<body>
 			<trans-unit id="tab.news" xml:space="preserve">

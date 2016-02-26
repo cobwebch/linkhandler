@@ -95,8 +95,7 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
 
         try {
             $isRecordReference = StringUtility::beginsWith($linkParts['url'], 'record:' . $this->identifier . ':');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
 
@@ -179,9 +178,9 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
             $tree = '<td class="c-wCell" valign="top">' . $this->renderPageTree() . '</td>';
         }
         $recordList = $databaseBrowser->displayRecordsForPage(
-            $this->expandPage,
-            $this->configuration['table'],
-            $this->getUrlParameters([])
+                $this->expandPage,
+                $this->configuration['table'],
+                $this->getUrlParameters([])
         );
         $content = '
 			<table border="0" cellpadding="0" cellspacing="0" id="typo3-linkPages">
@@ -226,7 +225,7 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
     public function getBodyTagAttributes()
     {
         $attributes = [
-            'data-identifier' => 'record:' . $this->identifier
+                'data-identifier' => 'record:' . $this->identifier
         ];
         if (array_key_exists('url', $this->linkParts)) {
             $attributes['data-current-link'] = $this->linkParts['url'];
@@ -245,7 +244,7 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
     {
         $pid = isset($values['pid']) ? (int)$values['pid'] : $this->expandPage;
         $parameters = [
-            'expandPage' => $pid
+                'expandPage' => $pid
         ];
         return array_merge(
                 $this->linkBrowser->getUrlParameters($values),
