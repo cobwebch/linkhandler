@@ -150,6 +150,23 @@ RTE {
 }
 ```
 
+## Hooks
+
+A single hook is provided. It can be used to manipulate most of the data from
+the `\Cobweb\Linkhandler\TypolinkHandler` class before the typolink is actually
+generated. An example usage could be to change the link target pid dynamically
+based on some values from the record being linked to.
+
+Hook usage should be declared in an extension's `ext_localconf.php`file:
+
+```
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkhandler']['generateLink'][] = '\Foo\Bar\MyParameterProcessor';
+```
+
+The declared class must implement interface `\Cobweb\Linkhandler\ProcessLinkParameterInterface`.
+It can use the many getters and setters of `\Cobweb\Linkhandler\TypolinkHandler`
+to read and write data.
+
 
 **TODO: all the feature below are untested with TYPO3 CMS 7 LTS. Some may even have been removed during the cleanup but could be introduced again.**
 

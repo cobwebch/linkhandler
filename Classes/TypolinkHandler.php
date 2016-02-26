@@ -66,6 +66,11 @@ class TypolinkHandler implements SingletonInterface
     protected $parentTypoScriptConfiguration = array();
 
     /**
+     * @var array Final configuration assembled for the typolink
+     */
+    protected $typolinkConfiguration = array();
+
+    /**
      * @var string Name of the table being linked to
      */
     protected $table = '';
@@ -129,6 +134,7 @@ class TypolinkHandler implements SingletonInterface
 
         // Restore values (because this object is a singleton)
         $this->record = array();
+        $this->typolinkConfiguration = array();
 
         try {
             $generatedLink = $this->generateLink();
@@ -176,23 +182,19 @@ class TypolinkHandler implements SingletonInterface
                 $this->linkParameters
         );
         if (array_key_exists('mergeWithLinkhandlerConfiguration', $this->parentTypoScriptConfiguration)) {
-            $finalConfiguration = $this->parentTypoScriptConfiguration;
-            ArrayUtility::mergeRecursiveWithOverrule($finalConfiguration, $typoScriptConfiguration);
+            $this->typolinkConfiguration = $this->parentTypoScriptConfiguration;
+            ArrayUtility::mergeRecursiveWithOverrule($this->typolinkConfiguration, $typoScriptConfiguration);
         } else {
-            $finalConfiguration = $typoScriptConfiguration;
+            $this->typolinkConfiguration = $typoScriptConfiguration;
         }
 
-        $hookParams = array(
-                'linkInformation' => &$this->linkParameters,
-                'typoscriptConfiguration' => &$finalConfiguration,
-                'linkText' => &$this->linkText,
-                'recordRow' => &$this->record
-        );
-
+        // Call registered hooks
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkhandler']['generateLink'])) {
-            foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkhandler']['generateLink'] as $funcRef) {
-                // @todo: make that clean with an interface
-                GeneralUtility::callUserFunction($funcRef, $hookParams, $this);
+            foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkhandler']['generateLink'] as $className) {
+                $linkParameterProcessor = GeneralUtility::makeInstance($className);
+                if ($linkParameterProcessor instanceof ProcessLinkParametersInterface) {
+                    $linkParameterProcessor->process($this);
+                }
             }
         }
 
@@ -204,7 +206,7 @@ class TypolinkHandler implements SingletonInterface
         $this->localContentObjectRenderer->parameters = $this->contentObjectRenderer->parameters;
         $link = $this->localContentObjectRenderer->typoLink(
                 $this->linkText,
-                $finalConfiguration
+                $this->typolinkConfiguration
         );
 
         // Make the typolink data available in the parent content object
@@ -257,5 +259,116 @@ class TypolinkHandler implements SingletonInterface
         $this->record = $record;
     }
 
-    // @todo: added all useful getters and setters for hook
+    /**
+     * @return array
+     */
+    public function getRecord()
+    {
+        return $this->record;
+    }
+
+    /**
+     * @param array $record
+     */
+    public function setRecord($record)
+    {
+        $this->record = $record;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLinkText()
+    {
+        return $this->linkText;
+    }
+
+    /**
+     * @param string $linkText
+     */
+    public function setLinkText($linkText)
+    {
+        $this->linkText = $linkText;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLinkParameters()
+    {
+        return $this->linkParameters;
+    }
+
+    /**
+     * @param array $linkParameters
+     */
+    public function setLinkParameters($linkParameters)
+    {
+        $this->linkParameters = $linkParameters;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTypolinkConfiguration()
+    {
+        return $this->typolinkConfiguration;
+    }
+
+    /**
+     * @param array $typolinkConfiguration
+     */
+    public function setTypolinkConfiguration($typolinkConfiguration)
+    {
+        $this->typolinkConfiguration = $typolinkConfiguration;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    /**
+     * @param string $table
+     */
+    public function setTable($table)
+    {
+        $this->table = $table;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUid()
+    {
+        return $this->uid;
+    }
+
+    /**
+     * @param int $uid
+     */
+    public function setUid($uid)
+    {
+        $this->uid = $uid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getConfigurationKey()
+    {
+        return $this->configurationKey;
+    }
+
+    /**
+     * @param string $configurationKey
+     */
+    public function setConfigurationKey($configurationKey)
+    {
+        $this->configurationKey = $configurationKey;
+    }
+
 }
