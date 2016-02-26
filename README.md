@@ -77,26 +77,27 @@ used for the TSconfig part. The configuration is straight TS using the
 
 #### Special configuration options
 
-typolink.mergeWithLinkhandlerConfiguration
-  This configuration is needed when creating a link directly with TypoScript and not
-  in a content element. For example, with such a code:
+####typolink.mergeWithLinkhandlerConfiguration
 
-  ```
-  lib.foo {
-  	10 = TEXT
-  	10 {
-  		typolink {
-  			mergeWithLinkhandlerConfiguration = 1
-  			parameter = record:tx_news:tx_news_domain_model_news:11 - foo "Link from TS menu"
-  			returnLast = url
-  		}
-  	}
-  }
-  ```
+This configuration is needed when creating a link directly with TypoScript and not
+in a content element. For example, with such a code:
 
-  In this case we want the `returnLast = url` parameter to be merged with the default
-  rendering configuration. With the `mergeWithLinkhandlerConfiguration = 1` we tell
-  "linkhandler" to do just that.
+```
+lib.foo {
+	10 = TEXT
+	10 {
+		typolink {
+			mergeWithLinkhandlerConfiguration = 1
+			parameter = record:tx_news:tx_news_domain_model_news:11 - foo "Link from TS menu"
+			returnLast = url
+		}
+	}
+}
+```
+
+In this case we want the `returnLast = url` parameter to be merged with the default
+rendering configuration. With the `mergeWithLinkhandlerConfiguration = 1` we tell
+"linkhandler" to do just that.
 
 ## Tips & Tricks
 
