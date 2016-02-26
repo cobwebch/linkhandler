@@ -1,73 +1,83 @@
 # Linkhandler
 
-This is a fork of the linkhandler TYPO3 extension.
+This extensions uses the TYPO3 CMS Core API to provide the possibility
+to define additional tabs in the link browser to create links directly
+to specific records.
 
-## About this fork
+Originally the "linkhandler" was created by AOE GmbH. This fork progressively
+drifted away from the original and has now been nearly fully rewritten for
+TYPO3 CMS 7 LTS, using its new API.
 
-This is an officious version of extension linkhandler. It is the result of my own
-cleanups and of other forks, merged into this one.
-
-The master version was duly tested with TYPO3 CMS 7.2. It seems to work fine with
-up to 7.4, but is not fully tested.
+Default configurations are provided for both "news" and "tt_news"
+extensions.
 
 For a version compatible with TYPO3 CMS 6.2, please use the TYPO3_6-2 branch.
 
-## Additional features
+## Configuration
 
-This Extension offers some additional features compared to the original version.
+The configuration comes in two parts. TSconfig is used to define the
+tabs for the link browser and TypoScript is used to define how to build
+the typolinks when rendering the links.
 
-### Multiple configurations for the same table
+### TSconfig
 
-It is now possible to create links to the same table within different configurations. E.g. you could link
-to different content types to different target pages.
+Default configurations can be included in any page using the
+new "Include Page TSConfig (from extensions):" feature when
+editing the "Resources" tab of a page.
 
-For this to work the links now consists of four parts instead of three. The old link block looked like this:
-
-```
-record:<table_name>:<uid>
-```
-
-The new link block looks like this:
+This is the TSconfig used for linking to news records of extension "news":
 
 ```
-record:<config_key>:<table_name>:<uid>
+// Page TSconfig for registering the linkhandler for "news" records
+TCEMAIN.linkHandler.tx_news {
+	handler = Cobweb\Linkhandler\RecordLinkHandler
+	label = LLL:EXT:linkhandler/Resources/Private/Language/locallang.xlf:tab.news
+	configuration {
+		table = tx_news_domain_model_news
+	}
+	scanBefore = page
+}
 ```
 
-This feature is backward compatible. If an old link is detected that consists only of three parts the first
-configuration found for the linked table will be used.
+If you would like to link to any other type of record, just duplicate that
+configuration and change the `label` and `configuration.table` options.
 
-### Record filtering
+You will also need to change the key used in the definition, i.e.
+`tx_news` in the above example. Make sure you use a uniquer key,
+otherwise your new configuration will override another one.
 
-The records that are displayed in the list can be filtered by SQL queries. You can define a search query
-for each table configured in ```listTables```. This is an example configuration for using the
-```additionalSearchQueries``` option in the TSConfig:
+Leave the other options untouched.
+
+**TODO: describe the other options**
+
+### TypoScript
+
+Include TS static templates as needed.
+
+Again let's consider the configuration for "news" as an example
 
 ```
-mod.tx_linkhandler.tx_myext_imagelinks {
-	label = Image link
-	listTables = tt_content
-	additionalSearchQueries {
-		tt_content = AND tt_content.CType='image'
+plugin.tx_linkhandler.tx_news {
+
+	// Do not force link generation when the news records are hidden or deleted.
+	forceLink = 0
+
+	typolink {
+		parameter = {$plugin.tx_linkhandler.news.singlePid}
+		additionalParams = &tx_news_pi1[news]={field:uid}&tx_news_pi1[controller]=News&tx_news_pi1[action]=detail
+		additionalParams.insertData = 1
+		useCacheHash = 1
 	}
 }
 ```
 
-### Page tree mount points
+Note that the configuration key (i.e. `tx_news`) needs to be the same as the one
+used for the TSconfig part. The configuration is straight TS using the
+"typolink" function.
 
-You can configure mount points for the page tree that is displayed in the element browser.
+**TODO: all the feature below are untested with TYPO3 CMS 7 LTS. Some may even have been removed during the cleanup but could be introduced again.**
 
-For example if you only want to diplay the pages where your news records are located
-(in this example PID 123 and 234) you can use the following Page TSConfig:
-
-```
-mod.tx_linkhandler.tx_news_news.pageTreeMountPoints {
-	1 = 123
-	2 = 234
-}
-RTE.default.tx_linkhandler.tx_news_news.pageTreeMountPoints < mod.tx_linkhandler.tx_news_news.pageTreeMountPoints
-```
-
-### Linkvalidator support
+## Linkvalidator support
 
 This linkhandler version comes with its own linkvalidator link type that supports the new link format with four parameters
 and provides some additional features that are not merged yet to the core.
@@ -160,9 +170,3 @@ RTE {
 	}
 }
 ```
-
-## Missing Feature
-
-The last missing feature in this version is the handling of the "Save and show" button.
-
->>>>>>> intera6-2
