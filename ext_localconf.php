@@ -4,13 +4,25 @@ if (!defined('TYPO3_MODE')) {
 }
 
 // Add typolink handler for "record" links
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_content.php']['typolinkLinkHandler']['record'] = 'Cobweb\\Linkhandler\\TypolinkHandler';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_content.php']['typolinkLinkHandler']['record'] = \Cobweb\Linkhandler\TypolinkHandler::class;
 
 // Register signal slots
 /** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
 $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
-$signalSlotDispatcher->connect('TYPO3\\CMS\\Core\\Database\\SoftReferenceIndex', 'getTypoLinkParts', 'Cobweb\\Linkhandler\\SoftReferenceHandler', 'getTypoLinkParts', FALSE);
-$signalSlotDispatcher->connect('TYPO3\\CMS\\Core\\Database\\SoftReferenceIndex', 'setTypoLinkPartsElement', 'Cobweb\\Linkhandler\\SoftReferenceHandler', 'setTypoLinkPartsElement', FALSE);
+$signalSlotDispatcher->connect(
+        \TYPO3\CMS\Core\Database\SoftReferenceIndex::class,
+        'getTypoLinkParts',
+        \Cobweb\Linkhandler\SoftReferenceHandler::class,
+        'getTypoLinkParts',
+        false
+);
+$signalSlotDispatcher->connect(
+        \TYPO3\CMS\Core\Database\SoftReferenceIndex::class,
+        'setTypoLinkPartsElement',
+        \Cobweb\Linkhandler\SoftReferenceHandler::class,
+        'setTypoLinkPartsElement',
+        false
+);
 
 /*
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkvalidator']['checkLinks']['tx_linkhandler'] = 'Aoe\\Linkhandler\\Linkvalidator\\LinkhandlerLinkType';
