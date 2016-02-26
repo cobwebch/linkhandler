@@ -52,8 +52,7 @@ Additional options exist and are described below:
 
 #### configuration.storagePid
 
-Makes it possible to reference a single storage pid. The link browser will
-automatically open in that page/folder.
+Forces the link browser to open directly in the page with the given id.
 
 #### configuration.hidePageTree
 
@@ -61,6 +60,19 @@ Set to 1 to complete hide the page tree. This is particularly useful
 in conjunction with the `storagePid` option above, since it makes it
 possible to work with just a list of records without having to click
 around the page tree.
+
+#### configuration.pageTreeMountPoints
+
+Numbered array of page uid's which will be used instead of the full page tree.
+
+The syntax is a numbered array:
+
+```
+pageTreeMountPoints {
+	1 = 18
+	2 = 91
+}
+```
 
 
 ### TypoScript

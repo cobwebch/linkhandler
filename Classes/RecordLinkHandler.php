@@ -203,13 +203,18 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
     {
         $backendUser = $this->getBackendUser();
 
-        // @todo: Load mount points
         /** @var RecordBrowserPageTreeView $pageTree */
         $pageTree = GeneralUtility::makeInstance(RecordBrowserPageTreeView::class);
         $pageTree->setLinkParameterProvider($this);
         $pageTree->ext_showPageId = (bool)$backendUser->getTSConfigVal('options.pageTree.showPageIdWithTitle');
         $pageTree->ext_showNavTitle = (bool)$backendUser->getTSConfigVal('options.pageTree.showNavTitle');
         $pageTree->addField('nav_title');
+
+        // Load the mount points, if any
+        // NOTE: mount points actually override the page tree
+        if (array_key_exists('pageTreeMountPoints.', $this->configuration) && count($this->configuration['pageTreeMountPoints.']) > 0) {
+            $pageTree->MOUNTS = $this->configuration['pageTreeMountPoints.'];
+        }
 
         $tree = '<h3>' . $this->getLanguageService()->getLL('pageTree') . ':</h3>';
         $tree .= $pageTree->getBrowsableTree();
