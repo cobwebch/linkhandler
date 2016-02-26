@@ -48,7 +48,20 @@ otherwise your new configuration will override another one.
 
 Leave the other options untouched.
 
-**TODO: describe the other options**
+Additional options exist and are described below:
+
+#### configuration.storagePid
+
+Makes it possible to reference a single storage pid. The link browser will
+automatically open in that page/folder.
+
+#### configuration.hidePageTree
+
+Set to 1 to complete hide the page tree. This is particularly useful
+in conjunction with the `storagePid` option above, since it makes it
+possible to work with just a list of records without having to click
+around the page tree.
+
 
 ### TypoScript
 
@@ -77,7 +90,13 @@ used for the TSconfig part. The configuration is straight TS using the
 
 #### Special configuration options
 
-####typolink.mergeWithLinkhandlerConfiguration
+##### forceLink
+
+Set to 1 to force the link generation even if the record is hidden,
+deleted or the user is not allowed to access it.
+(NOTE: currently this does not work as expected)
+
+##### typolink.mergeWithLinkhandlerConfiguration
 
 This configuration is needed when creating a link directly with TypoScript and not
 in a content element. For example, with such a code:
@@ -152,7 +171,4 @@ There is a TYPO3 6.2 fork that already implements the required patches (and some
 
 ### Additional goodies
 
-* When editing a link the correct tab will open automatically.
-* The searchbox below the record list can be disabled by setting ```enableSearchBox = 0``` in the tab configuration in TSConfig.
 * SoftReference handling using signal slots, TYPO3 patch pending: https://review.typo3.org/27746/
-* The current link is displayed in a nice label consisting of the localized table label and the linked record title.
