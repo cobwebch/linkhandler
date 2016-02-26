@@ -127,6 +127,9 @@ class TypolinkHandler implements SingletonInterface
         $this->linkText = $linkText;
         $this->contentObjectRenderer = $contentObjectRenderer;
 
+        // Restore values (because this object is a singleton)
+        $this->record = array();
+
         try {
             $generatedLink = $this->generateLink();
         } catch (\Exception $e) {
@@ -158,13 +161,11 @@ class TypolinkHandler implements SingletonInterface
         $typoScriptConfiguration = $this->configuration[$this->configurationKey]['typolink.'];
 
         try {
-            $this->initRecord();
+            $this->getLinkedRecord(
+                    (bool)$this->configuration[$this->configurationKey]['forceLink']
+            );
         } catch (RecordNotFoundException $e) {
-            // Unless linking is forced, return only the link text
-            // @todo: should we not get the record in this case (using \TYPO3\CMS\Frontend\Page\PageRepository::getRawRecord()) otherwise link generation will be pretty meaningless?
-            if (!$this->configuration[$this->configurationKey]['forceLink']) {
-                return $this->linkText;
-            }
+            return $this->linkText;
         }
 
         // Assemble full parameters syntax with additional attributes like target, class or title
@@ -226,15 +227,23 @@ class TypolinkHandler implements SingletonInterface
     /**
      * Checks if the defined record exists and is accessible to the user. If yes, the record is returned.
      *
-     * @return array|int
+     * @param bool $forceFetch If true, the record will be fetched disregarding all permissions and visibility settings
+     * @return void
      * @throws Exception\RecordNotFoundException
      */
-    protected function initRecord()
+    protected function getLinkedRecord($forceFetch = false)
     {
-        $record = $this->tsfe->sys_page->checkRecord(
-                $this->table,
-                $this->uid
-        );
+        if ($forceFetch) {
+            $record = $this->tsfe->sys_page->getRawRecord(
+                    $this->table,
+                    $this->uid
+            );
+        } else {
+            $record = $this->tsfe->sys_page->checkRecord(
+                    $this->table,
+                    $this->uid
+            );
+        }
         if ($record === 0) {
             throw new RecordNotFoundException(
                     sprintf(

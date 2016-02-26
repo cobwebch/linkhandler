@@ -94,7 +94,6 @@ used for the TSconfig part. The configuration is straight TS using the
 
 Set to 1 to force the link generation even if the record is hidden,
 deleted or the user is not allowed to access it.
-(NOTE: currently this does not work as expected)
 
 ##### typolink.mergeWithLinkhandlerConfiguration
 
