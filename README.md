@@ -75,6 +75,51 @@ Note that the configuration key (i.e. `tx_news`) needs to be the same as the one
 used for the TSconfig part. The configuration is straight TS using the
 "typolink" function.
 
+#### Special configuration options
+
+typolink.mergeWithLinkhandlerConfiguration
+  This configuration is needed when creating a link directly with TypoScript and not
+  in a content element. For example, with such a code:
+
+  ```
+  lib.foo {
+  	10 = TEXT
+  	10 {
+  		typolink {
+  			mergeWithLinkhandlerConfiguration = 1
+  			parameter = record:tx_news:tx_news_domain_model_news:11 - foo "Link from TS menu"
+  			returnLast = url
+  		}
+  	}
+  }
+  ```
+
+  In this case we want the `returnLast = url` parameter to be merged with the default
+  rendering configuration. With the `mergeWithLinkhandlerConfiguration = 1` we tell
+  "linkhandler" to do just that.
+
+## Tips & Tricks
+
+### Link browser width
+
+You can use TSConfig to increase the with of the link browser windows in the backend.
+The default size is a bit too small especially when have those extra tabs.
+
+```
+RTE {
+	default {
+		buttons {
+			link {
+				dialogueWindow {
+					width = 800
+				}
+			}
+		}
+	}
+}
+```
+
+
 **TODO: all the feature below are untested with TYPO3 CMS 7 LTS. Some may even have been removed during the cleanup but could be introduced again.**
 
 ## Linkvalidator support
@@ -103,46 +148,6 @@ mod.linkvalidator {
 For this additional option to work this pending TYPO3 patch is required: https://review.typo3.org/#/c/26499/ (Provide TSConfig to link checkers).
 There is a TYPO3 6.2 fork that already implements the required patches (and some more) at Github: https://github.com/Intera/TYPO3.CMS
 
-### Pass on parent typolink configuration
-
-*This feature is experimental and might change in the future!* Testing and suggestions welcome :)
-
-A config option called ```overrideParentTypolinkConfiguration``` is available. When this option is enabled for a tab configuration,
-the original configuration passed to the ```typolink()``` method will be used as the basis for the final typolink configuration that
-is used in linkhandler. Here is an example:
-
-Imagine you have a typolink like this:
-
-```
-lib.myobj = TEXT
-lib.myobj {
-	value = Hello World
-	typolink.parameter = record:tx_news_news:tx_news_domain_model_news:1
-	typolink.no_cache = 1
-}
-```
-
-When you now configure for example the news records like this, the ```no_cache``` option from the ```lib.myobj.typolink``` block
-will be passed on to the typolink call used by linkhandler:
-
-```
-plugin.tx_linkhandler.tx_news_news {
-	overrideParentTypolinkConfiguration = 1
-}
-```
-
-You can still override this behavior in the linkhandler configuration though because the ```typolink`` block is merged into
-the parent configuration:
-
-```
-plugin.tx_linkhandler.tx_news_news {
-	overrideParentTypolinkConfiguration = 1
-	typolink.no_cache = 0
-}
-```
-
-The only value that is **always** overwritten is the ```parameter``` configuration.
-
 
 ### Additional goodies
 
@@ -150,23 +155,3 @@ The only value that is **always** overwritten is the ```parameter``` configurati
 * The searchbox below the record list can be disabled by setting ```enableSearchBox = 0``` in the tab configuration in TSConfig.
 * SoftReference handling using signal slots, TYPO3 patch pending: https://review.typo3.org/27746/
 * The current link is displayed in a nice label consisting of the localized table label and the linked record title.
-
-## Tips & Tricks
-
-### Link browser width
-
-You can use TSConfig to increase the with of the link browser windows in the Backend to prevent problem with the styles:
-
-```
-RTE {
-	default {
-		buttons {
-			link {
-				dialogueWindow {
-					width = 600
-				}
-			}
-		}
-	}
-}
-```

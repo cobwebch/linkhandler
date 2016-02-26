@@ -17,6 +17,7 @@ namespace Cobweb\Linkhandler;
 use Cobweb\Linkhandler\Exception\MissingConfigurationException;
 use Cobweb\Linkhandler\Exception\RecordNotFoundException;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Service\TypoLinkCodecService;
@@ -64,8 +65,19 @@ class TypolinkHandler implements SingletonInterface
      */
     protected $configurationKey = '';
 
+    /**
+     * @var array TypoScript configuration which triggered the link rendering
+     */
+    protected $parentTypoScriptConfiguration = array();
+
+    /**
+     * @var string Name of the table being linked to
+     */
     protected $table = '';
 
+    /**
+     * @var int Id of the record being linked to
+     */
     protected $uid = 0;
 
     /**
@@ -113,6 +125,7 @@ class TypolinkHandler implements SingletonInterface
         // Add information from the parameter
         $linkParameterParts = explode(':', $linkHandlerValue);
         $this->configurationKey = $linkParameterParts[0] . '.';
+        $this->parentTypoScriptConfiguration = $configuration;
         $this->table = $linkParameterParts[1];
         $this->uid = (int)$linkParameterParts[2];
 
@@ -167,10 +180,16 @@ class TypolinkHandler implements SingletonInterface
         )->encode(
                 $this->linkParameters
         );
+        if (array_key_exists('mergeWithLinkhandlerConfiguration', $this->parentTypoScriptConfiguration)) {
+            $finalConfiguration = $this->parentTypoScriptConfiguration;
+            ArrayUtility::mergeRecursiveWithOverrule($finalConfiguration, $typoScriptConfiguration);
+        } else {
+            $finalConfiguration = $typoScriptConfiguration;
+        }
 
         $hookParams = array(
                 'linkInformation' => &$this->linkParameters,
-                'typoscriptConfiguration' => &$typoScriptConfiguration,
+                'typoscriptConfiguration' => &$finalConfiguration,
                 'linkText' => &$this->linkText,
                 'recordRow' => &$this->record
         );
@@ -190,7 +209,7 @@ class TypolinkHandler implements SingletonInterface
         $this->localContentObjectRenderer->parameters = $this->contentObjectRenderer->parameters;
         $link = $this->localContentObjectRenderer->typoLink(
                 $this->linkText,
-                $typoScriptConfiguration
+                $finalConfiguration
         );
 
         // Make the typolink data available in the parent content object
