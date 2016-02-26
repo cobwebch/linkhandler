@@ -41,11 +41,6 @@ class TypolinkHandler implements SingletonInterface
     protected $configuration = array();
 
     /**
-     * @var string The full link handler key (record:[config_index]:[ŧable]:[uid])
-     */
-    public $linkHandlerKey = '';
-
-    /**
      * @var array All link parameters (including class name, page type, etc.)
      */
     public $linkParameters = array();
@@ -130,7 +125,6 @@ class TypolinkHandler implements SingletonInterface
         $this->uid = (int)$linkParameterParts[2];
 
         $this->linkText = $linkText;
-        //		$this->linkHandlerKey = $linkHandlerKeyword . ':' . $linkHandlerValue;
         $this->contentObjectRenderer = $contentObjectRenderer;
 
         try {
