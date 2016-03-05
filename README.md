@@ -136,13 +136,13 @@ the `\Cobweb\Linkhandler\TypolinkHandler` class before the typolink is actually
 generated. An example usage could be to change the link target pid dynamically
 based on some values from the record being linked to.
 
-Hook usage should be declared in an extension's `ext_localconf.php`file:
+Hook usage should be declared in an extension's `ext_localconf.php` file:
 
 ```
-$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkhandler']['generateLink'][] = '\Foo\Bar\MyParameterProcessor';
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkhandler']['generateLink'][] = 'Foo\Bar\MyParameterProcessor';
 ```
 
-The declared class must implement interface `\Cobweb\Linkhandler\ProcessLinkParameterInterface`.
+The declared class must implement interface `\Cobweb\Linkhandler\ProcessLinkParametersInterface`.
 It can use the many getters and setters of `\Cobweb\Linkhandler\TypolinkHandler`
 to read and write data.
 
@@ -188,7 +188,7 @@ mod.linkvalidator {
 }
 ```
 
-Please not that you need to use ```tx_linkhandler``` instead of ```linkhandler``` which is the default link type that comes with the core.
+Please note that you need to use ```tx_linkhandler``` instead of ```linkhandler``` which is the default link type that comes with the core.
 
 This link type comes with an additional configuration option that allows the reporting of links that point to  hidden records:
 
