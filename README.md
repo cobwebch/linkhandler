@@ -13,6 +13,7 @@ extensions.
 
 For a version compatible with TYPO3 CMS 6.2, please use the TYPO3_6-2 branch.
 
+
 ## Configuration
 
 The configuration comes in two parts. TSconfig is used to define the
@@ -100,6 +101,7 @@ Note that the configuration key (i.e. `tx_news`) needs to be the same as the one
 used for the TSconfig part. The configuration is straight TS using the
 "typolink" function.
 
+
 #### Special configuration options
 
 ##### forceLink
@@ -129,6 +131,7 @@ In this case we want the `returnLast = url` parameter to be merged with the defa
 rendering configuration. With the `mergeWithLinkhandlerConfiguration = 1` we tell
 "linkhandler" to do just that.
 
+
 ## Hooks
 
 A single hook is provided. It can be used to manipulate most of the data from
@@ -146,10 +149,34 @@ The declared class must implement interface `\Cobweb\Linkhandler\ProcessLinkPara
 It can use the many getters and setters of `\Cobweb\Linkhandler\TypolinkHandler`
 to read and write data.
 
+
 ## Soft reference handling
 
 Extension "linkhandler" provides a soft reference parser which will pick any
 record being linked to and update the system references accordingly.
+
+
+## Linkvalidator support
+
+This extension hooks into linkvalidator for checking record links. It is automatically activated.
+In case you want to disable it, you can use the following Page TSconfig:
+
+To use it you have to adjust your linkvalidator TSConfig:
+
+```
+mod.linkvalidator.linktypes := removeFromList(tx_linkhandler)
+}
+```
+
+There is an additional configuration option that allows the reporting of links that point to
+disabled records (hidden, start tieme not met yet, etc):
+
+```
+mod.linkvalidator {
+	tx_linkhandler.reportHiddenRecords = 1
+}
+```
+
 
 ## Tips & Tricks
 
@@ -171,32 +198,3 @@ RTE {
 	}
 }
 ```
-
-
-**TODO: all the feature below are untested with TYPO3 CMS 7 LTS. Some may even have been removed during the cleanup but could be introduced again.**
-
-## Linkvalidator support
-
-This linkhandler version comes with its own linkvalidator link type that supports the new link format with four parameters
-and provides some additional features that are not merged yet to the core.
-
-To use it you have to adjust your linkvalidator TSConfig:
-
-```
-mod.linkvalidator {
-	linktypes = db,external,tx_linkhandler
-}
-```
-
-Please not that you need to use ```tx_linkhandler``` instead of ```linkhandler``` which is the default link type that comes with the core.
-
-This link type comes with an additional configuration option that allows the reporting of links that point to  hidden records:
-
-```
-mod.linkvalidator {
-	tx_linkhandler.reportHiddenRecords = 1
-}
-```
-
-For this additional option to work this pending TYPO3 patch is required: https://review.typo3.org/#/c/26499/ (Provide TSConfig to link checkers).
-There is a TYPO3 6.2 fork that already implements the required patches (and some more) at Github: https://github.com/Intera/TYPO3.CMS

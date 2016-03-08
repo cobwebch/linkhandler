@@ -24,6 +24,5 @@ $signalSlotDispatcher->connect(
         false
 );
 
-/*
-$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkvalidator']['checkLinks']['tx_linkhandler'] = 'Aoe\\Linkhandler\\Linkvalidator\\LinkhandlerLinkType';
-*/
+// Register linkvalidator custom type
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkvalidator']['checkLinks']['tx_linkhandler'] = \Cobweb\Linkhandler\Linkvalidator\LinkhandlerLinkType::class;

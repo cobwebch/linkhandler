@@ -14,13 +14,16 @@
 				<source>Error</source>
 			</trans-unit>
 			<trans-unit id="list.report.rownotvisible" xml:space="preserve">
-				<source>###title### row (###uid###) is not visible.</source>
+				<source>%1$s row (%2$s) is currently not visible.</source>
 			</trans-unit>
 			<trans-unit id="list.report.rowdeleted" xml:space="preserve">
-				<source>###title### row (###uid###) is deleted.</source>
+				<source>%1$s row (%2$s) is deleted.</source>
 			</trans-unit>
 			<trans-unit id="list.report.rownotexisting" xml:space="preserve">
-				<source>Row (###uid###) does not exist.</source>
+				<source>%1$s row (%2$s) does not exist.</source>
+			</trans-unit>
+			<trans-unit id="list.report.invalidurl" xml:space="preserve">
+				<source>Record reference is not valid.</source>
 			</trans-unit>
 		</body>
 	</file>

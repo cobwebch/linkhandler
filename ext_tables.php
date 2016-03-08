@@ -23,7 +23,6 @@ if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('tt_news')) {
             'Link handler - tt_news'
     );
 }
-
 if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
             'linkhandler',
@@ -31,3 +30,8 @@ if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
             'Link handler - news'
     );
 }
+
+// Add tx_linkhandler type to linkvalidator
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
+        'mod.linkvalidator.linktypes := addToList(tx_linkhandler)'
+);

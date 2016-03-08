@@ -1,26 +1,20 @@
 <?php
-namespace Aoe\Linkhandler\Linkvalidator;
+namespace Cobweb\Linkhandler\Linkvalidator;
 
-/*                                                                        *
- * This script belongs to the TYPO3 extension "linkhandler".              *
- *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU General Public License as published by the Free   *
- * Software Foundation, either version 3 of the License, or (at your      *
- * option) any later version.                                             *
- *                                                                        *
- * This script is distributed in the hope that it will be useful, but     *
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
- * Public License for more details.                                       *
- *                                                                        *
- * You should have received a copy of the GNU General Public License      *
- * along with the script.                                                 *
- * If not, see http://www.gnu.org/licenses/gpl.html                       *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
- *                                                                        */
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
 
+use Cobweb\Linkhandler\Domain\Model\RecordLink;
 use TYPO3\CMS\Linkvalidator\Linktype\AbstractLinktype;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 
@@ -45,6 +39,20 @@ class LinkhandlerLinkType extends AbstractLinktype
     const ERROR_TYPE_DISABLED = 'disabled';
 
     /**
+     * This error occurs when the related record does not exist at all.
+     *
+     * @var string
+     */
+    const ERROR_TYPE_MISSING = 'missing';
+
+    /**
+     * This error occurs when the related record does not exist at all.
+     *
+     * @var string
+     */
+    const ERROR_TYPE_INVALID = 'invalid';
+
+    /**
      * TYPO3 database connection.
      *
      * @var \TYPO3\CMS\Core\Database\DatabaseConnection
@@ -66,81 +74,80 @@ class LinkhandlerLinkType extends AbstractLinktype
     protected $languageService;
 
     /**
-     * If this is TRUE an error will also be reported if the linked record
-     * is disabled. Otherwise the error will only be reported if the
-     * record is deleted or does not exist.
-     *
-     * @var boolean
+     * @var RecordLink
      */
-    protected $reportHiddenRecords;
+    protected $recordLink;
 
     /**
-     * Tab handler factory for retrieving link information.
-     *
-     * @var \Aoe\Linkhandler\Browser\TabHandlerFactory
-     */
-    protected $tabHandlerFactory;
-
-    /**
-     * Checks a given URL for validity
+     * Checks a given URL for validity.
      *
      * @param string $url Url to check
      * @param array $softRefEntry The soft reference entry which builds the context of that url
-     * @param \TYPO3\CMS\Linkvalidator\LinkAnalyzer $reference Parent instance
+     * @param \TYPO3\CMS\Linkvalidator\LinkAnalyzer $linkAnalyzer Parent instance
      * @return boolean TRUE on success or FALSE on error
      */
-    public function checkLink($url, $softRefEntry, $reference)
+    public function checkLink($url, $softRefEntry, $linkAnalyzer)
     {
         $response = true;
         $errorType = '';
         $errorParams = array();
         $this->initializeRequiredClasses();
 
-        $linkInfo = $this->tabHandlerFactory->getLinkInfoArrayFromMatchingHandler($url);
-        if (empty($linkInfo)) {
-            return true;
+        try {
+            $this->recordLink = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                    RecordLink::class,
+                    $url
+            );
+        }
+        catch (\Exception $e) {
+            // Set error type to invalid (record reference) and return early
+            $this->setErrorParams(
+                    array(
+                        'errorType' => self::ERROR_TYPE_INVALID,
+                        'url' => $url
+                    )
+            );
+            return false;
         }
 
-        $tableName = $linkInfo['recordTable'];
-        $rowid = $linkInfo['recordUid'];
-        $row = null;
-        $tsConfig = $reference->getTSConfig();
-        $this->reportHiddenRecords = (bool)$tsConfig['tx_linkhandler.']['reportHiddenRecords'];
+        // Get hidden records reporting parameter from TSconfig
+        // If hidden records reporting is true, an error will be raised for hidden records and not just for deleted or missing records
+        $tsConfig = $linkAnalyzer->getTSConfig();
+        $reportHiddenRecords = (bool)$tsConfig['tx_linkhandler.']['reportHiddenRecords'];
 
-        // First check, if we find a non disabled record if the check
-        // for hidden records is enabled.
-        if ($this->reportHiddenRecords) {
-            $row = $this->getRecordRow($tableName, $rowid, 'disabled');
-            if ($row === null) {
+        // Get the record without enable fields
+        // If reporting about "hidden" records, also get the record with enable fields
+        $rawRecord = $this->getRecordRow();
+        $enabledRecord = $rawRecord;
+        if ($reportHiddenRecords) {
+            $enabledRecord = $this->getRecordRow(true);
+        }
+
+        // If the record was not found without any condition, it is completely missing from the database
+        if ($rawRecord === null) {
+            $response = false;
+            $errorType = self::ERROR_TYPE_MISSING;
+        } else {
+            // If the record was found, but its "delete" flag is set, it is a deleted record
+            $deleteFlag = (!empty($GLOBALS['TCA'][$this->recordLink->getTable()]['ctrl']['delete'])) ? $GLOBALS['TCA'][$this->recordLink->getTable()]['ctrl']['delete'] : '';
+            if ($deleteFlag !== '') {
+                $deleted = (bool)$rawRecord[$deleteFlag];
+                if ($deleted) {
+                    $response = false;
+                    $errorType = self::ERROR_TYPE_DELETED;
+                }
+            }
+            // If no record was fetched when applying the "enable fields" conditions, the record is currently disabled
+            if ($enabledRecord === null) {
                 $response = false;
                 $errorType = self::ERROR_TYPE_DISABLED;
             }
         }
 
-        // If no enabled record was found or we did not check that see
-        // if we can find a non deleted record.
-        if ($row === null) {
-            $row = $this->getRecordRow($tableName, $rowid, 'deleted');
-            if ($row === null) {
-                $response = false;
-                $errorType = self::ERROR_TYPE_DELETED;
-            }
-        }
-
-        // If we did not find a non deleted record, check if we find a
-        // deleted one.
-        if ($row === null) {
-            $row = $this->getRecordRow($tableName, $rowid, 'all');
-            if ($row === null) {
-                $response = false;
-                $errorType = '';
-            }
-        }
-
         if (!$response) {
             $errorParams['errorType'] = $errorType;
-            $errorParams['tablename'] = $tableName;
-            $errorParams['uid'] = $rowid;
+            $errorParams['tablename'] = $this->recordLink->getTable();
+            $errorParams['uid'] = $this->recordLink->getId();
             $this->setErrorParams($errorParams);
         }
 
@@ -148,7 +155,9 @@ class LinkhandlerLinkType extends AbstractLinktype
     }
 
     /**
-     * Type fetching method, based on the type that softRefParserObj returns
+     * Returns the type of link.
+     *
+     * If we detect a link starting with "record:", we consider it to be one of "ours".
      *
      * @param array $value Reference properties
      * @param string $type Current type
@@ -164,7 +173,7 @@ class LinkhandlerLinkType extends AbstractLinktype
     }
 
     /**
-     * Generate the localized error message from the error params saved from the parsing
+     * Generates the localized error message from the error params saved from the parsing.
      *
      * @param array $errorParams All parameters needed for the rendering of the error message
      * @return string Validation error message
@@ -173,6 +182,12 @@ class LinkhandlerLinkType extends AbstractLinktype
     {
         $this->initializeRequiredClasses();
         $errorType = $errorParams['errorType'];
+
+        // For invalid reference, return early with simple error message
+        if ($errorType === self::ERROR_TYPE_INVALID) {
+            return $this->translate('list.report.invalidurl');
+        }
+
         $tableName = $errorParams['tablename'];
         $title = $this->translate('list.report.rowdeleted.default.title');
         if ($GLOBALS['TCA'][$tableName]['ctrl']['title']) {
@@ -180,48 +195,38 @@ class LinkhandlerLinkType extends AbstractLinktype
         }
         switch ($errorType) {
             case self::ERROR_TYPE_DISABLED:
-                $response = $this->getTranslatedErrorMessage('list.report.rownotvisible', $errorParams['uid'], $title);
+                $message = $this->translate('list.report.rownotvisible');
+                $response = sprintf($message, $title, $errorParams['uid']);
                 break;
             case self::ERROR_TYPE_DELETED:
-                $response = $this->getTranslatedErrorMessage('list.report.rowdeleted', $errorParams['uid'], $title);
+                $message = $this->translate('list.report.rowdeleted');
+                $response = sprintf($message, $title, $errorParams['uid']);
                 break;
+            // Default is missing record
             default:
-                $response = $this->getTranslatedErrorMessage('list.report.rownotexisting', $errorParams['uid']);
+                $message = $this->translate('list.report.rownotexisting');
+                $response = sprintf($message, $title, $errorParams['uid']);
         }
         return $response;
     }
 
     /**
-     * Fetches the record with the given UID from the given table.
+     * Fetches the record corresponding to the current record reference.
      *
-     * The filter option accepts two values:
-     *
-     * "disabled" will filter out disabled and deleted records.
-     * "deleted" filters out deleted records but will return disabled records.
-     * If nothing is specified all records will be returned (including deleted).
-     *
-     * @param string $tableName The name of the table from which the record should be fetched.
-     * @param string $uid The UID of the record that should be fetched.
-     * @param string $filter A filter setting, can be empty or "disabled" or "deleted".
+     * @param bool $applyEnableFields TRUE to apply enable fields condition to
      * @return array The result row as associative array.
      */
-    protected function getRecordRow($tableName, $uid, $filter = '')
+    protected function getRecordRow($applyEnableFields = false)
     {
 
-        $whereStatement = 'uid = ' . (int)$uid;
-
-        switch ($filter) {
-            case 'disabled':
-                $whereStatement .= BackendUtility::BEenableFields($tableName) . BackendUtility::deleteClause($tableName);
-                break;
-            case 'deleted':
-                $whereStatement .= BackendUtility::deleteClause($tableName);
-                break;
+        $whereStatement = 'uid = ' . $this->recordLink->getId();
+        if ($applyEnableFields) {
+            $whereStatement .= BackendUtility::BEenableFields($this->recordLink->getTable());
         }
 
         $row = $this->databaseConnection->exec_SELECTgetSingleRow(
                 '*',
-                $tableName,
+                $this->recordLink->getTable(),
                 $whereStatement
         );
 
@@ -253,14 +258,10 @@ class LinkhandlerLinkType extends AbstractLinktype
     }
 
     /**
-     * Initializes all required classes if required.
+     * Initializes all required classes.
      */
     protected function initializeRequiredClasses()
     {
-        if (isset($this->tabHandlerFactory)) {
-            return;
-        }
-        $this->tabHandlerFactory = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Aoe\\Linkhandler\\Browser\\TabHandlerFactory');
         $this->languageService = $GLOBALS['LANG'];
         $this->databaseConnection = $GLOBALS['TYPO3_DB'];
     }
