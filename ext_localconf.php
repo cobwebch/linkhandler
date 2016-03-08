@@ -26,3 +26,6 @@ $signalSlotDispatcher->connect(
 
 // Register linkvalidator custom type
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkvalidator']['checkLinks']['tx_linkhandler'] = \Cobweb\Linkhandler\Linkvalidator\LinkhandlerLinkType::class;
+
+// Register migration controller
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \Cobweb\Linkhandler\Command\LinkMigrationCommandController::class;

@@ -44,7 +44,7 @@ If you would like to link to any other type of record, just duplicate that
 configuration and change the `label` and `configuration.table` options.
 
 You will also need to change the key used in the definition, i.e.
-`tx_news` in the above example. Make sure you use a uniquer key,
+`tx_news` in the above example. Make sure you use a unique key,
 otherwise your new configuration will override another one.
 
 Leave the other options untouched.
@@ -176,6 +176,38 @@ mod.linkvalidator {
 	tx_linkhandler.reportHiddenRecords = 1
 }
 ```
+
+
+## Migration ##
+
+The extension provides a command-line tool to migrated old record references
+to new ones. Older versions of "linkhandler" used a 3-part syntax to point to
+a recored, i.e. `record:table:uid`. The current version uses a 4-part syntax
+(`record:key:table:uid`) which makes it possible to have several tabs/configurations
+for the same table.
+
+To migrate old links, call the following:
+
+```
+/path/to/php typo3/cli_dispatch.phpsh extbase linkmigration:migrate
+```
+
+This will migrate links found in fields "tt_content.header_link", "tt_content.bodytext"
+and "sys_file_reference.link". To migrate data in other fields, use the "--fields" option:
+
+```
+/path/to/php typo3/cli_dispatch.phpsh extbase linkmigration:migrate --fields=tx_foo.bar,tx_foo.baz
+```
+
+For each table to which you had old links, the migration tool will ask you to enter a
+configuration key, which should correspond to the configuration keys you have declared
+in your TSconfig and TypoScripts configurations. This key will be added to the existing links
+to make them syntactically correct again.
+
+Note that 4-part links are left untouched by this tool, so it is okay to run it
+several times on the same fields (should that happend for whatever reason).
+
+**As with all tools that modify your database, please make a backup before running it!**
 
 
 ## Tips & Tricks
