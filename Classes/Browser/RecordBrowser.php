@@ -16,6 +16,14 @@ namespace Cobweb\Linkhandler\Browser;
 
 use TYPO3\CMS\Recordlist\Browser\DatabaseBrowser;
 
+/**
+ * Extends the DatabaseBrowser for the specific needs of the LinkBrowser.
+ *
+ * Mostly this is about being able to set to some parameters that cannot
+ * be set from outside the DatabaseBrowser.
+ *
+ * @package Cobweb\Linkhandler\Browser
+ */
 class RecordBrowser extends DatabaseBrowser
 {
     /**

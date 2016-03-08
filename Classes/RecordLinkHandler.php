@@ -14,6 +14,7 @@ namespace Cobweb\Linkhandler;
  * The TYPO3 project - inspiring people to share!
  */
 
+use Cobweb\Linkhandler\Browser\RecordBrowser;
 use Psr\Http\Message\ServerRequestInterface;
 use Cobweb\Linkhandler\Tree\View\RecordBrowserPageTreeView;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -168,8 +169,8 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
             $this->expandPage = (int)$this->configuration['storagePid'];
         }
 
-        /** @var \Cobweb\Linkhandler\Browser\RecordBrowser $databaseBrowser */
-        $databaseBrowser = GeneralUtility::makeInstance('Cobweb\\Linkhandler\\Browser\\RecordBrowser');
+        /** @var RecordBrowser $databaseBrowser */
+        $databaseBrowser = GeneralUtility::makeInstance(RecordBrowser::class);
 
         // Page tree may be hidden
         if ($this->configuration['hidePageTree']) {
