@@ -12,7 +12,7 @@
       "role": "Developer"
     }
   ],
-  "version": "3.0.0",
+  "version": "3.1.1",
   "require": {
     "typo3/cms-core": ">=7.6.1,<8.0"
   },
