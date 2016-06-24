@@ -21,6 +21,7 @@
     }
   },
   "replace": {
-    "cobweb/linkhandler": "*"
+    "linkhandler": "self.version",
+    "typo3-ter/linkhandler": "self-version"
   }
 }
