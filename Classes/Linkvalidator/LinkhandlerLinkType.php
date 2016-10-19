@@ -15,6 +15,7 @@ namespace Cobweb\Linkhandler\Linkvalidator;
  */
 
 use Cobweb\Linkhandler\Domain\Model\RecordLink;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Linkvalidator\Linktype\AbstractLinktype;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 
@@ -94,18 +95,14 @@ class LinkhandlerLinkType extends AbstractLinktype
         $this->initializeRequiredClasses();
 
         try {
-            $this->recordLink = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                    RecordLink::class,
-                    $url
-            );
-        }
-        catch (\Exception $e) {
+            $this->recordLink = GeneralUtility::makeInstance(RecordLink::class, $url);
+        } catch (\Exception $e) {
             // Set error type to invalid (record reference) and return early
             $this->setErrorParams(
-                    array(
-                        'errorType' => self::ERROR_TYPE_INVALID,
-                        'url' => $url
-                    )
+                array(
+                    'errorType' => self::ERROR_TYPE_INVALID,
+                    'url' => $url,
+                )
             );
             return false;
         }
@@ -129,7 +126,8 @@ class LinkhandlerLinkType extends AbstractLinktype
             $errorType = self::ERROR_TYPE_MISSING;
         } else {
             // If the record was found, but its "delete" flag is set, it is a deleted record
-            $deleteFlag = (!empty($GLOBALS['TCA'][$this->recordLink->getTable()]['ctrl']['delete'])) ? $GLOBALS['TCA'][$this->recordLink->getTable()]['ctrl']['delete'] : '';
+            $deleteFlag = (!empty($GLOBALS['TCA'][$this->recordLink->getTable()]['ctrl']['delete']))
+                ? $GLOBALS['TCA'][$this->recordLink->getTable()]['ctrl']['delete'] : '';
             if ($deleteFlag !== '') {
                 $deleted = (bool)$rawRecord[$deleteFlag];
                 if ($deleted) {
@@ -224,11 +222,7 @@ class LinkhandlerLinkType extends AbstractLinktype
             $whereStatement .= BackendUtility::BEenableFields($this->recordLink->getTable());
         }
 
-        $row = $this->databaseConnection->exec_SELECTgetSingleRow(
-                '*',
-                $this->recordLink->getTable(),
-                $whereStatement
-        );
+        $row = $this->databaseConnection->exec_SELECTgetSingleRow('*', $this->recordLink->getTable(), $whereStatement);
 
         // Since exec_SELECTgetSingleRow can return NULL or FALSE we
         // make sure we always return NULL if no row was found.

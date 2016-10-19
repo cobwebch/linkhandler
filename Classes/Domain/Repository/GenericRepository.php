@@ -23,7 +23,8 @@ use TYPO3\CMS\Core\Database\DatabaseConnection;
  *
  * @package Cobweb\Linkhandler\Domain\Repository
  */
-class GenericRepository {
+class GenericRepository
+{
     /**
      * Fetches a list of records from given table that contain links to records.
      *
@@ -44,26 +45,21 @@ class GenericRepository {
         $where = implode(' OR ', $conditions) . BackendUtility::deleteClause($table);
         try {
             $fields = implode(', ', $listOfFields);
-            $result = $this->getDatabaseConnection()->exec_SELECTgetRows(
-                    'uid, ' . $fields,
-                    $table,
-                    $where
-            );
+            $result = $this->getDatabaseConnection()->exec_SELECTgetRows('uid, ' . $fields, $table, $where);
             if ($result === null) {
                 throw new FailedQueryException(
-                        sprintf(
-                                'A SQL error occurred querying table "%s" with fields "%s": %s',
-                                $table,
-                                $fields,
-                                $this->getDatabaseConnection()->sql_error()
-                        ),
-                        1457441163
+                    sprintf(
+                        'A SQL error occurred querying table "%s" with fields "%s": %s',
+                        $table,
+                        $fields,
+                        $this->getDatabaseConnection()->sql_error()
+                    ),
+                    1457441163
                 );
             } else {
                 $records = $result;
             }
-        }
-        catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             // Nothing to do here
         }
         return $records;
@@ -81,11 +77,7 @@ class GenericRepository {
         $globalResult = true;
         // @todo: this could be improved to provide better reporting on errors (and maybe use transactions to roll everything back)
         foreach ($records as $id => $fields) {
-            $result = $this->getDatabaseConnection()->exec_UPDATEquery(
-                    $table,
-                    'uid = ' . (int)$id,
-                    $fields
-            );
+            $result = $this->getDatabaseConnection()->exec_UPDATEquery($table, 'uid = ' . (int)$id, $fields);
             $globalResult &= $result;
         }
         return $globalResult;

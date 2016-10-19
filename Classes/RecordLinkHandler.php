@@ -42,6 +42,7 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
 
     /**
      * Specific TSconfig for the current instance (corresponds to TCEMAIN.linkHandler.record.identifier.configuration)
+     *
      * @var array
      */
     protected $configuration = array();
@@ -105,17 +106,11 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
             $recordParts = explode(':', $linkParts['url']);
             $table = $recordParts[2];
             $uid = (int)$recordParts[3];
-            $record = BackendUtility::getRecord(
-                    $table,
-                    $uid
-            );
+            $record = BackendUtility::getRecord($table, $uid);
             if ($record === null) {
                 $linkParts['title'] = $this->getLanguageService()->getLL('recordNotFound');
             } else {
-                $recordTitle = BackendUtility::getRecordTitle(
-                        $table,
-                        $record
-                );
+                $recordTitle = BackendUtility::getRecordTitle($table, $record);
                 // Store information about that record
                 $linkParts['table'] = $table;
                 $linkParts['tableName'] = $this->getLanguageService()->sL($GLOBALS['TCA'][$table]['ctrl']['title']);
@@ -137,10 +132,10 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
     public function formatCurrentUrl()
     {
         return sprintf(
-                '%s: %s [uid: %d]',
-                $this->linkParts['tableName'],
-                $this->linkParts['title'],
-                $this->linkParts['uid']
+            '%s: %s [uid: %d]',
+            $this->linkParts['tableName'],
+            $this->linkParts['title'],
+            $this->linkParts['uid']
         );
     }
 
@@ -179,9 +174,9 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
             $tree = '<td class="c-wCell" valign="top">' . $this->renderPageTree() . '</td>';
         }
         $recordList = $databaseBrowser->displayRecordsForPage(
-                $this->expandPage,
-                $this->configuration['table'],
-                $this->getUrlParameters([])
+            $this->expandPage,
+            $this->configuration['table'],
+            $this->getUrlParameters([])
         );
         $content = '
 			<table border="0" cellpadding="0" cellspacing="0" id="typo3-linkPages">
@@ -213,7 +208,7 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
 
         // Load the mount points, if any
         // NOTE: mount points actually override the page tree
-        if (array_key_exists('pageTreeMountPoints.', $this->configuration) && count($this->configuration['pageTreeMountPoints.']) > 0) {
+        if (!empty($this->configuration['pageTreeMountPoints.'])) {
             $pageTree->MOUNTS = $this->configuration['pageTreeMountPoints.'];
         }
 
@@ -231,7 +226,7 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
     public function getBodyTagAttributes()
     {
         $attributes = [
-                'data-identifier' => 'record:' . $this->identifier
+            'data-identifier' => 'record:' . $this->identifier,
         ];
         if (array_key_exists('url', $this->linkParts)) {
             $attributes['data-current-link'] = $this->linkParts['url'];
@@ -250,12 +245,12 @@ class RecordLinkHandler extends AbstractLinkHandler implements LinkHandlerInterf
     {
         $pid = isset($values['pid']) ? (int)$values['pid'] : $this->expandPage;
         $parameters = [
-                'expandPage' => $pid
+            'expandPage' => $pid,
         ];
         return array_merge(
-                $this->linkBrowser->getUrlParameters($values),
-                ['P' => $this->linkBrowser->getParameters()],
-                $parameters
+            $this->linkBrowser->getUrlParameters($values),
+            ['P' => $this->linkBrowser->getParameters()],
+            $parameters
         );
     }
 

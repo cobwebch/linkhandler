@@ -2,13 +2,16 @@
   "name": "cobweb/linkhandler",
   "type": "typo3-cms-extension",
   "description": "Create links to any record (e.g. news)",
-  "homepage": "http://typo3.org",
   "license": [
     "GPL-2.0+"
   ],
   "authors": [
     {
       "name": "Francois Suter",
+      "role": "Developer"
+    },
+    {
+      "name": "Markus Klein",
       "role": "Developer"
     }
   ],

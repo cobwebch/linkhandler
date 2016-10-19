@@ -20,7 +20,8 @@ namespace Cobweb\Linkhandler;
  *
  * @package Cobweb\Linkhandler
  */
-interface ProcessLinkParametersInterface {
+interface ProcessLinkParametersInterface
+{
     /**
      * @param \Cobweb\Linkhandler\TypolinkHandler $linkHandler Back-reference to the calling object
      * @return void

@@ -21,7 +21,8 @@ namespace Cobweb\Linkhandler\Domain\Model;
  *
  * @package Cobweb\Linkhandler\Domain\Model
  */
-class RecordLink {
+class RecordLink
+{
     /**
      * @var string Name of the linkhandler configuration
      */
@@ -112,10 +113,7 @@ class RecordLink {
     public function setRecordReference($recordReference)
     {
         if (empty($recordReference)) {
-            throw new \InvalidArgumentException(
-                    'Record reference cannot be empty',
-                    1457367830
-            );
+            throw new \InvalidArgumentException('Record reference cannot be empty', 1457367830);
         }
         $referenceParts = explode(':', $recordReference);
         if (count($referenceParts) === 4) {
@@ -125,8 +123,8 @@ class RecordLink {
             $this->id = (int)$referenceParts[3];
         } else {
             throw new \InvalidArgumentException(
-                    'Expected record reference structure is "record:key:table:id"',
-                    1457367830
+                'Expected record reference structure is "record:key:table:id"',
+                1457367830
             );
         }
     }
