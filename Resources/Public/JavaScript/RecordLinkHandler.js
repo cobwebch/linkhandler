@@ -15,31 +15,31 @@ define('TYPO3/CMS/Linkhandler/RecordLinkHandler', ['jquery', 'TYPO3/CMS/Recordli
 	'use strict';
 
 	/**
-	 * @type {{currentLink: string, identifier: string}}
+	 * @type {{currentLink: string, identifier: string, linkRecord: function, linkCurrent: function}}
 	 * @exports TYPO3/CMS/Taggedlist/RecordLinkHandler
 	 */
 	var RecordLinkHandler = {
 		currentLink: '',
-		identifier: ''
-	};
+		identifier: '',
 
-	/**
-	 * @param {Event} event
-	 */
-	RecordLinkHandler.linkRecord = function (event) {
-		event.preventDefault();
+		/**
+		 * @param {Event} event
+		 */
+		linkRecord: function (event) {
+			event.preventDefault();
 
-		var data = $(this).parents('span').data();
-		LinkBrowser.finalizeFunction(RecordLinkHandler.identifier + ':' + data.table + ':' + data.uid);
-	};
+			var data = $(this).parents('span').data();
+			LinkBrowser.finalizeFunction(RecordLinkHandler.identifier + ':' + data.table + ':' + data.uid);
+		},
 
-	/**
-	 * @param {Event} event
-	 */
-	RecordLinkHandler.linkCurrent = function (event) {
-		event.preventDefault();
+		/**
+		 * @param {Event} event
+		 */
+		linkCurrent: function (event) {
+			event.preventDefault();
 
-		LinkBrowser.finalizeFunction(RecordLinkHandler.currentLink);
+			LinkBrowser.finalizeFunction(RecordLinkHandler.currentLink);
+		}
 	};
 
 	$(function () {

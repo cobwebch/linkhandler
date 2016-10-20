@@ -26,7 +26,8 @@ use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
  *
  * @package TYPO3\CMS\Extbase\Command
  */
-class LinkMigrationCommandController extends CommandController {
+class LinkMigrationCommandController extends CommandController
+{
     /**
      * Default list of fields where to search for record references to migrate
      */
@@ -90,20 +91,14 @@ class LinkMigrationCommandController extends CommandController {
             $this->setFields($fields);
             // Loop on all tables and fields
             foreach ($this->tablesAndFields as $table => $listOfFields) {
-                $this->gatherRecordsToMigrate(
-                        $table,
-                        $listOfFields
-                );
+                $this->gatherRecordsToMigrate($table, $listOfFields);
             }
             // Ask the user for configuration key for each table
             $this->getConfigurationKeys();
             // Replace in fields and save modified data
             $this->migrateRecords();
-        }
-        catch (\InvalidArgumentException $e) {
-            $this->outputLine(
-                    $e->getMessage() . ' (' . $e->getCode() . ')'
-            );
+        } catch (\InvalidArgumentException $e) {
+            $this->outputLine($e->getMessage() . ' (' . $e->getCode() . ')');
             $this->quit(1);
         }
     }
@@ -122,11 +117,8 @@ class LinkMigrationCommandController extends CommandController {
             list($table, $field) = explode('.', $aField);
             if (empty($table) || empty($field)) {
                 throw new \InvalidArgumentException(
-                        sprintf(
-                                'Invalid argument "%s". Use "table.field" syntax',
-                                $aField
-                        ),
-                        1457434202
+                    sprintf('Invalid argument "%s". Use "table.field" syntax', $aField),
+                    1457434202
                 );
             } else {
                 if (!array_key_exists($table, $this->tablesAndFields)) {
@@ -150,10 +142,7 @@ class LinkMigrationCommandController extends CommandController {
     protected function gatherRecordsToMigrate($table, $listOfFields)
     {
         try {
-            $records = $this->genericRepository->findByRecordLink(
-                    $table,
-                    $listOfFields
-            );
+            $records = $this->genericRepository->findByRecordLink($table, $listOfFields);
             foreach ($records as $record) {
                 $id = (int)$record['uid'];
                 foreach ($listOfFields as $field) {
@@ -161,11 +150,7 @@ class LinkMigrationCommandController extends CommandController {
                     // Find all element that have a syntax like "record:string:string(:string)"
                     // The last string is optional. If it exists, it is already a 4-part record reference,
                     // i.e. a reference using the new syntax and which does not need to be migrated.
-                    preg_match_all(
-                            '/record:(\w+):(\w+)(:\w+)?/',
-                            $record[$field],
-                            $matches
-                    );
+                    preg_match_all('/record:(\w+):(\w+)(:\w+)?/', $record[$field], $matches);
                     foreach ($matches as $index => $match) {
                         // Consider only matches that have 3 parts (i.e. 4th part is empty)
                         // NOTE: although not captured, the first part is "record:"
@@ -186,7 +171,7 @@ class LinkMigrationCommandController extends CommandController {
                             if (!array_key_exists($field, $this->recordsForMigration[$table][$id])) {
                                 $this->recordsForMigration[$table][$id][$field] = array(
                                     'content' => $record[$field],
-                                    'matches' => array()
+                                    'matches' => array(),
                                 );
                             }
                             $this->recordsForMigration[$table][$id][$field]['matches'][] = $matches[0][$index];
@@ -194,15 +179,8 @@ class LinkMigrationCommandController extends CommandController {
                     }
                 }
             }
-        }
-        catch (FailedQueryException $e) {
-            $this->outputLine(
-                    sprintf(
-                            'Table "%s" skipped. An error occurred: %s',
-                            $table,
-                            $e->getMessage()
-                    )
-            );
+        } catch (FailedQueryException $e) {
+            $this->outputLine(sprintf('Table "%s" skipped. An error occurred: %s', $table, $e->getMessage()));
         }
     }
 
@@ -211,19 +189,16 @@ class LinkMigrationCommandController extends CommandController {
      *
      * @return void
      */
-    protected function getConfigurationKeys() {
+    protected function getConfigurationKeys()
+    {
         foreach ($this->tablesForMigration as $table => &$dummy) {
             $key = null;
             do {
                 try {
                     $key = $this->console->ask(
-                            sprintf(
-                                    'Please enter the configuration key to use for table "%s": ',
-                                    $table
-                            )
+                        sprintf('Please enter the configuration key to use for table "%s": ', $table)
                     );
-                }
-                catch (\Exception $e) {
+                } catch (\Exception $e) {
                     // Do nothing, just let it try again
                 }
             } while ($key === null);
@@ -246,11 +221,7 @@ class LinkMigrationCommandController extends CommandController {
                     foreach ($fieldInformation['matches'] as $link) {
                         $linkParts = explode(':', $link);
                         $newLink = 'record:' . $this->tablesForMigration[$linkParts[1]] . ':' . $linkParts[1] . ':' . $linkParts[2];
-                        $updatedField = str_replace(
-                                $link,
-                                $newLink,
-                                $updatedField
-                        );
+                        $updatedField = str_replace($link, $newLink, $updatedField);
                     }
                     if (!array_key_exists($id, $recordsForTable)) {
                         $recordsForTable[$id] = array();
@@ -258,15 +229,9 @@ class LinkMigrationCommandController extends CommandController {
                     $recordsForTable[$id][$field] = $updatedField;
                 }
             }
-            $result = $this->genericRepository->massUpdate(
-                    $table,
-                    $recordsForTable
-            );
+            $result = $this->genericRepository->massUpdate($table, $recordsForTable);
             if (!$result) {
-                $this->outputLine(
-                        'Some database updates failed for table "%s"',
-                        $table
-                );
+                $this->outputLine('Some database updates failed for table "%s"', $table);
             }
         }
     }

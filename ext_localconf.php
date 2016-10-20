@@ -10,18 +10,18 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_content.php']['typo
 /** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
 $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
 $signalSlotDispatcher->connect(
-        \TYPO3\CMS\Core\Database\SoftReferenceIndex::class,
-        'getTypoLinkParts',
-        \Cobweb\Linkhandler\SoftReferenceHandler::class,
-        'getTypoLinkParts',
-        false
+    \TYPO3\CMS\Core\Database\SoftReferenceIndex::class,
+    'getTypoLinkParts',
+    \Cobweb\Linkhandler\SoftReferenceHandler::class,
+    'getTypoLinkParts',
+    false
 );
 $signalSlotDispatcher->connect(
-        \TYPO3\CMS\Core\Database\SoftReferenceIndex::class,
-        'setTypoLinkPartsElement',
-        \Cobweb\Linkhandler\SoftReferenceHandler::class,
-        'setTypoLinkPartsElement',
-        false
+    \TYPO3\CMS\Core\Database\SoftReferenceIndex::class,
+    'setTypoLinkPartsElement',
+    \Cobweb\Linkhandler\SoftReferenceHandler::class,
+    'setTypoLinkPartsElement',
+    false
 );
 
 // Register linkvalidator custom type
