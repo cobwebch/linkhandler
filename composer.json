@@ -2,6 +2,7 @@
   "name": "cobweb/linkhandler",
   "type": "typo3-cms-extension",
   "description": "Create links to any record (e.g. news)",
+  "version": "3.1.2",
   "license": [
     "GPL-2.0+"
   ],
