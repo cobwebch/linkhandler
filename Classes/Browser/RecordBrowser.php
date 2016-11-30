@@ -62,6 +62,8 @@ class RecordBrowser extends DatabaseBrowser
         $this->urlParameters = $urlParameters;
         $this->urlParameters['mode'] = 'db';
         $this->expandPage = $selectedPage;
+        // unset languageField to hide record translations in link browser
+        unset($GLOBALS['TCA'][$tables]['ctrl']['languageField']);
         return $this->renderTableRecords($tables);
     }
 
