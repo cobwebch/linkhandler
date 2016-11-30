@@ -29,3 +29,8 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['linkvalidator']['checkLinks']['tx_linkha
 
 // Register migration controller
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \Cobweb\Linkhandler\Command\LinkMigrationCommandController::class;
+
+if (TYPO3_MODE === 'BE') {
+    // Register for hook to modify the DB list query
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/class.db_list_extra.inc']['getTable']['tx_linkhandler'] = \Cobweb\Linkhandler\Hooks\RecordListGetTableHook::class;
+}
