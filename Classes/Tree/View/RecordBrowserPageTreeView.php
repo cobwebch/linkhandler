@@ -61,9 +61,9 @@ class RecordBrowserPageTreeView extends ElementBrowserPageTreeView
             $out .= '
 				<li' . ($classAttr ? ' class="' . trim($classAttr) . '"' : '') . '>
 					<span class="list-tree-group' . $selected . '">
-						' . $treeItem['HTML'] . $this->wrapTitle($this->getTitleStr($treeItem['row'], $titleLen),
-                            $treeItem['row'], $this->ext_pArrPages) . '
-					</span>
+						' . $treeItem['HTML']
+                    . $this->wrapTitle($this->getTitleStr($treeItem['row'], $titleLen), $treeItem['row'], $this->ext_pArrPages)
+                    . '</span>
 				';
             if (!$treeItem['hasSub']) {
                 $out .= '</li>';
@@ -99,9 +99,10 @@ class RecordBrowserPageTreeView extends ElementBrowserPageTreeView
     public function wrapTitle($title, $record, $ext_pArrPages = false)
     {
         $urlParameters = $this->linkParameterProvider->getUrlParameters(['pid' => (int)$record['uid']]);
-        $aOnClick = 'return jumpToUrl(' . GeneralUtility::quoteJSvalue($this->getThisScript() . ltrim(GeneralUtility::implodeArrayForUrl('',
-                                $urlParameters), '&')) . ');';
-        return '<span class="list-tree-title"><a href="#" onclick="' . htmlspecialchars($aOnClick) . '">' . $title . '</a></span>';
+        $url = $this->getThisScript() . ltrim(GeneralUtility::implodeArrayForUrl('', $urlParameters), '&');
+        $aOnClick = 'return jumpToUrl(' . GeneralUtility::quoteJSvalue($url) . ');';
+        return '<span class="list-tree-title"><a href="#" onclick="' . htmlspecialchars($aOnClick) . '">'
+               . $title . '</a></span>';
     }
 
     /**

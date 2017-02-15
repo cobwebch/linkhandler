@@ -112,12 +112,12 @@ class TypolinkHandler implements SingletonInterface
      * @return string
      */
     public function main(
-            $linkText,
-            $configuration,
-            $linkHandlerKeyword,
-            $linkHandlerValue,
-            $linkParameters,
-            $contentObjectRenderer
+        $linkText,
+        $configuration,
+        $linkHandlerKeyword,
+        $linkHandlerValue,
+        $linkParameters,
+        $contentObjectRenderer
     ) {
 
         // if parameter is set as array ("parameter."), the link can not be resolved, so unset
@@ -144,9 +144,7 @@ class TypolinkHandler implements SingletonInterface
         try {
             $generatedLink = $this->generateLink();
         } catch (\Exception $e) {
-            $generatedLink = $this->formatErrorMessage(
-                    $e->getMessage()
-            );
+            $generatedLink = $this->formatErrorMessage($e->getMessage());
         }
 
         return $generatedLink;
@@ -162,30 +160,22 @@ class TypolinkHandler implements SingletonInterface
     {
         if (!array_key_exists($this->configurationKey, $this->configuration)) {
             throw new MissingConfigurationException(
-                    sprintf(
-                            'No linkhandler TypoScript configuration found for key %s.',
-                            $this->configurationKey
-                    ),
-                    1448384257
+                sprintf('No linkhandler TypoScript configuration found for key %s.', $this->configurationKey),
+                1448384257
             );
         }
         $typoScriptConfiguration = $this->configuration[$this->configurationKey]['typolink.'];
 
         try {
-            $this->getLinkedRecord(
-                    (bool)$this->configuration[$this->configurationKey]['forceLink']
-            );
+            $this->getLinkedRecord((bool)$this->configuration[$this->configurationKey]['forceLink']);
         } catch (RecordNotFoundException $e) {
             return $this->linkText;
         }
 
         // Assemble full parameters syntax with additional attributes like target, class or title
         $this->linkParameters['url'] = $typoScriptConfiguration['parameter'];
-        $typoScriptConfiguration['parameter'] = GeneralUtility::makeInstance(
-                TypoLinkCodecService::class
-        )->encode(
-                $this->linkParameters
-        );
+        $typoScriptConfiguration['parameter'] = GeneralUtility::makeInstance(TypoLinkCodecService::class)
+            ->encode($this->linkParameters);
         if (array_key_exists('mergeWithLinkhandlerConfiguration', $this->parentTypoScriptConfiguration)) {
             $this->typolinkConfiguration = $this->parentTypoScriptConfiguration;
             ArrayUtility::mergeRecursiveWithOverrule($this->typolinkConfiguration, $typoScriptConfiguration);
@@ -204,15 +194,9 @@ class TypolinkHandler implements SingletonInterface
         }
 
         // Build the full link to the record
-        $this->localContentObjectRenderer->start(
-                $this->record,
-                $this->table
-        );
+        $this->localContentObjectRenderer->start($this->record, $this->table);
         $this->localContentObjectRenderer->parameters = $this->contentObjectRenderer->parameters;
-        $link = $this->localContentObjectRenderer->typoLink(
-                $this->linkText,
-                $this->typolinkConfiguration
-        );
+        $link = $this->localContentObjectRenderer->typoLink($this->linkText, $this->typolinkConfiguration);
 
         // Make the typolink data available in the parent content object
         $this->contentObjectRenderer->lastTypoLinkLD = $this->localContentObjectRenderer->lastTypoLinkLD;
@@ -241,24 +225,14 @@ class TypolinkHandler implements SingletonInterface
     protected function getLinkedRecord($forceFetch = false)
     {
         if ($forceFetch) {
-            $record = $this->tsfe->sys_page->getRawRecord(
-                    $this->table,
-                    $this->uid
-            );
+            $record = $this->tsfe->sys_page->getRawRecord($this->table, $this->uid);
         } else {
-            $record = $this->tsfe->sys_page->checkRecord(
-                    $this->table,
-                    $this->uid
-            );
+            $record = $this->tsfe->sys_page->checkRecord($this->table, $this->uid);
         }
         if ($record === 0) {
             throw new RecordNotFoundException(
-                    sprintf(
-                            'Record %d of table %s not found or not accessible',
-                            $this->uid,
-                            $this->table
-                    ),
-                    1448384669
+                sprintf('Record %d of table %s not found or not accessible', $this->uid, $this->table),
+                1448384669
             );
         }
         $this->record = $record;

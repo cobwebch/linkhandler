@@ -14,8 +14,6 @@ namespace Cobweb\Linkhandler;
  * The TYPO3 project - inspiring people to share!
  */
 
-use \TYPO3\CMS\Core\Utility\GeneralUtility;
-
 /**
  * Class called by the signal slot dispatcher in the SoftReferenceIndex.
  *
@@ -59,22 +57,35 @@ class SoftReferenceHandler
      * @return array
      */
     public function setTypoLinkPartsElement(
+        $linkHandlerFound,
+        $typolinkProperties,
+        $content,
+        $elements,
+        $index,
+        $tokenID,
+        $softReferenceIndex
+    ) {
+
+        if ($typolinkProperties['LINK_TYPE'] === 'linkhandler') {
+            $content = $this->setTypoLinkPartsElementForLinkhandler(
+                $typolinkProperties['url'],
+                $elements,
+                $index,
+                $tokenID,
+                $content
+            );
+            $linkHandlerFound = true;
+        }
+
+        return array(
             $linkHandlerFound,
             $typolinkProperties,
             $content,
             $elements,
             $index,
             $tokenID,
-            $softReferenceIndex
-    ) {
-
-        if ($typolinkProperties['LINK_TYPE'] === 'linkhandler') {
-
-            $content = $this->setTypoLinkPartsElementForLinkhandler($typolinkProperties['url'], $elements, $index, $tokenID, $content);
-            $linkHandlerFound = true;
-        }
-
-        return array($linkHandlerFound, $typolinkProperties, $content, $elements, $index, $tokenID, $softReferenceIndex);
+            $softReferenceIndex,
+        );
     }
 
     /**
@@ -89,13 +100,12 @@ class SoftReferenceHandler
      */
     protected function setTypoLinkPartsElementForLinkhandler($url, &$elements, $index, $tokenID, $content)
     {
-
         $referenceParts = explode(':', $url);
         $elements[$tokenID . ':' . $index]['subst'] = array(
-                'type' => 'db',
-                'recordRef' => $referenceParts[2] . ':' . $referenceParts[3],
-                'tokenID' => $tokenID,
-                'tokenValue' => $content
+            'type' => 'db',
+            'recordRef' => $referenceParts[2] . ':' . $referenceParts[3],
+            'tokenID' => $tokenID,
+            'tokenValue' => $content,
         );
 
         return '{softref:' . $tokenID . '}';
