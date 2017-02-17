@@ -120,6 +120,11 @@ class TypolinkHandler implements SingletonInterface
         $contentObjectRenderer
     ) {
 
+        // if parameter is set as array ("parameter."), the link can not be resolved, so unset
+        if (is_array($configuration['parameter.'])) {
+            unset($configuration['parameter.']);
+        }
+
         // Extract the link parts (i.e. parameter, target, class, title and additional parameters
         $this->linkParameters = GeneralUtility::makeInstance(TypoLinkCodecService::class)->decode($linkParameters);
         // Add information from the parameter
