@@ -66,6 +66,11 @@ class TypolinkHandler implements SingletonInterface
     protected $parentTypoScriptConfiguration = array();
 
     /**
+     * @var array Data of the parent that could be merged with record data before calling typolink
+     */
+    protected $parentData = array();
+
+    /**
      * @var array Final configuration assembled for the typolink
      */
     protected $typolinkConfiguration = array();
@@ -126,6 +131,7 @@ class TypolinkHandler implements SingletonInterface
         $linkParameterParts = explode(':', $linkHandlerValue);
         $this->configurationKey = $linkParameterParts[0] . '.';
         $this->parentTypoScriptConfiguration = $configuration;
+        $this->parentData = $contentObjectRenderer->data;
         $this->table = $linkParameterParts[1];
         $this->uid = (int)$linkParameterParts[2];
 
@@ -191,6 +197,7 @@ class TypolinkHandler implements SingletonInterface
         // Build the full link to the record
         $this->localContentObjectRenderer->start($this->record, $this->table);
         $this->localContentObjectRenderer->parameters = $this->contentObjectRenderer->parameters;
+        ArrayUtility::mergeRecursiveWithOverrule($this->localContentObjectRenderer->data, $this->parentData);
         $link = $this->localContentObjectRenderer->typoLink($this->linkText, $this->typolinkConfiguration);
 
         // Make the typolink data available in the parent content object
