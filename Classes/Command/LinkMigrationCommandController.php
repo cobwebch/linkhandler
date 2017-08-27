@@ -151,7 +151,7 @@ class LinkMigrationCommandController extends CommandController
                     // The last string is optional. If it exists, it is already a 4-part record reference,
                     // i.e. a reference using the new syntax and which does not need to be migrated.
                     preg_match_all('/record:(\w+):(\w+)(:\w+)?/', $record[$field], $matches);
-                    foreach ($matches as $index => $match) {
+                    foreach ($matches[0] as $index => $match) {
                         // Consider only matches that have 3 parts (i.e. 4th part is empty)
                         // NOTE: although not captured, the first part is "record:"
                         if ($matches[3][$index] === '') {
