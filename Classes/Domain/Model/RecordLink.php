@@ -115,12 +115,11 @@ class RecordLink
         if (empty($recordReference)) {
             throw new \InvalidArgumentException('Record reference cannot be empty', 1457367830);
         }
-        $referenceParts = explode(':', $recordReference);
-        if (count($referenceParts) === 4) {
-            $this->recordReference = $recordReference;
-            $this->configurationKey = $referenceParts[1];
-            $this->table = $referenceParts[2];
-            $this->id = (int)$referenceParts[3];
+        if (preg_match('/^record:(\w+):(\w+):(\d+)/', $recordReference, $matches)) {
+            $this->recordReference = $matches[0];
+            $this->configurationKey = $matches[1];
+            $this->table = $matches[2];
+            $this->id = (int)$matches[3];
         } else {
             throw new \InvalidArgumentException(
                 'Expected record reference structure is "record:key:table:id"',
